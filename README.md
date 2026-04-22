@@ -19,13 +19,13 @@ Banco de Dados
 PostgreSQL (principal)
 
 Entidades principais:
-Users
-Friends / Connections
-Challenges
-UserProgress
-Scores
-Rankings
-Leagues
+(Users)
+(Friends / Connections)
+(Challenges)
+(UserProgress)
+(Scores)
+(Rankings)
+(Leagues)
 
 
 # Integrantes
