@@ -30,13 +30,18 @@ Entidades principais:
 
 # Integrantes
 
-Kevin Caley Lauar Ferreira Quimatzoyaro
-Arthur Norberto
-Lucas Oliveira
-Lucas
-Thais Ferreira
-Tata
 
+Arthur Norberto da Silveira
+
+Kevin Caley Lauar Ferreira Quimatzoyaro
+
+Lucas de Oliveira Barboza
+
+Lucas Terra Vieira de Oliveira
+
+Taylanne Patricia Mendes
+
+Thais Ferreira de Oliveira Almeida
 # Kanbam Projeto
 https://github.com/users/AlunoKevin/projects/5/views/1
 
