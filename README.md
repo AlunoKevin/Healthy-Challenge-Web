@@ -57,4 +57,18 @@ Thais Ferreira de Oliveira Almeida
 # Kanbam Projeto
 https://github.com/users/AlunoKevin/projects/5/views/1
 
+# Tecnologias previstas (verificar com o resto)
+
+Front-end: React / HTML / CSS / JavaScript
+
+
+Back-end: Node.js / Express
+
+
+Banco de dados: PostgreSQL
+
+
+Controle de versão: Git/GitHub
+
+
 # Como executar o programa
