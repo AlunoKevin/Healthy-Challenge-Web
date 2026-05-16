@@ -19,6 +19,10 @@ O Healthy Challenge Web busca solucionar esse problema por meio da gamificação
 
 O projeto também se relaciona diretamente com o Objetivo de Desenvolvimento Sustentável (ODS) 3 — Saúde e Bem-Estar, proposto pela ONU, ao promover ações voltadas à melhoria da saúde física e mental, incentivando hábitos positivos e maior qualidade de vida entre os usuários.
 
+# Público Alvo
+
+O público-alvo do Healthy Challenge Web é composto principalmente por estudantes universitários e adultos que desejam desenvolver e manter hábitos saudáveis de forma mais motivadora e interativa. A plataforma busca atender pessoas que possuem rotinas corridas e dificuldade em manter constância em práticas de bem-estar físico e mental, utilizando elementos de gamificação, competição social e desafios para aumentar o engajamento e incentivar uma rotina mais saudável.
+
 
 # Banco de dados - preliminar
 
