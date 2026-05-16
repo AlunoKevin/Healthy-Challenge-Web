@@ -11,6 +11,14 @@ O sistema contará com funcionalidades essenciais como cadastro e login de usuá
 
 Além dos desafios voltados a hábitos saudáveis mais simples, a aplicação também incluirá atividades interativas, como mini-jogos cognitivos. Um exemplo é um jogo de memória baseado em uma matriz de cores, no qual o usuário precisa memorizar e reproduzir padrões dentro de um tempo limite. O sistema será desenvolvido para web, utilizando uma arquitetura cliente-servidor, permitindo uma experiência dinâmica no navegador e suporte à evolução futura do projeto.
 
+# Problema que o sistema pretende solucionar e sua relação com os ODS
+
+Atualmente, muitas pessoas enfrentam dificuldades para manter hábitos saudáveis de forma consistente devido à falta de motivação, acompanhamento contínuo e incentivo social. Além disso, atividades relacionadas ao bem-estar físico e mental frequentemente acabam sendo deixadas de lado na rotina diária, reduzindo a qualidade de vida e o engajamento com práticas saudáveis.
+
+O Healthy Challenge Web busca solucionar esse problema por meio da gamificação e da interação social, transformando hábitos cotidianos em desafios interativos que geram pontuação, evolução em ligas e participação em rankings. Dessa forma, o sistema pretende aumentar o engajamento dos usuários e incentivar a adoção de práticas saudáveis de maneira mais dinâmica, competitiva e divertida.
+
+O projeto também se relaciona diretamente com o Objetivo de Desenvolvimento Sustentável (ODS) 3 — Saúde e Bem-Estar, proposto pela ONU, ao promover ações voltadas à melhoria da saúde física e mental, incentivando hábitos positivos e maior qualidade de vida entre os usuários.
+
 
 # Banco de dados - preliminar
 
