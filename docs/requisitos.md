@@ -140,18 +140,6 @@ As senhas nunca devem ser armazenadas em texto puro no banco de dados.
 
 ---
 
-# 7. Tecnologias Sugeridas
-
-| Camada | Tecnologia |
-|---|---|
-| Frontend | React.js |
-| Backend | Node.js / Express |
-| Banco de Dados | PostgreSQL |
-| Autenticação | JWT |
-| Hospedagem | Docker + Cloud |
-
----
-
-# 8. Considerações Finais
+# 7. Considerações Finais
 
 Este documento apresenta os requisitos iniciais do sistema Healthy Challenge Web e poderá ser atualizado conforme evolução do projeto e surgimento de novas necessidades.
