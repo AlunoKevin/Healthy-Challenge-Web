@@ -17,6 +17,7 @@ O desenvolvimento do projeto segue metodologias ágeis baseadas em SCRUM, utiliz
 * **Controle de Versão:** Git e GitHub
 * **Repositório:**
   https://github.com/AlunoKevin/Healthy-Challenge-Web/tree/main
+* **Link Kanbam: https://github.com/users/AlunoKevin/projects/5/views/1
 
 ---
 
