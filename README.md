@@ -31,13 +31,28 @@ Banco de Dados
 PostgreSQL (principal)
 
 Entidades principais:
-(Users)
-(Friends / Connections)
-(Challenges)
-(UserProgress)
-(Scores)
-(Rankings)
-(Leagues)
+
+Usuário
+
+Desafio/Tarefa
+
+Hábito
+
+Liga
+
+Pontuação
+
+Leaderboard
+
+Amizade
+
+Grupo/Subgrupo
+
+Histórico de atividades
+
+Sequência de dias (streak)
+
+Preferência de dificuldade
 
 
 # Integrantes
@@ -57,7 +72,7 @@ Thais Ferreira de Oliveira Almeida
 # Kanbam Projeto
 https://github.com/users/AlunoKevin/projects/5/views/1
 
-# Tecnologias previstas (verificar com o resto)
+# Tecnologias previstas 
 
 Front-end: React / HTML / CSS / JavaScript
 
