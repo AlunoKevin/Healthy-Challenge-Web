@@ -1,0 +1,41 @@
+const pool = require('../config/conexao');
+
+// busca um usuario pelo email, retorna a linha ou undefined
+async function buscarPorEmail(email) {
+  const sql = 'SELECT * FROM Usuario WHERE email = $1';
+  const resultado = await pool.query(sql, [email]);
+  return resultado.rows[0];
+}
+
+// busca um usuario pelo id
+async function buscarPorId(id) {
+  const sql = 'SELECT * FROM Usuario WHERE id_usuario = $1';
+  const resultado = await pool.query(sql, [id]);
+  return resultado.rows[0];
+}
+
+// cria um usuario novo e retorna a linha criada sem o hash da senha
+async function criar(usuario) {
+  const sql = `
+    INSERT INTO Usuario (nome, email, senha_hash, nivel_dificuldade, id_liga)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id_usuario, nome, email, nivel_dificuldade, id_liga, data_cadastro
+  `;
+  const valores = [
+    usuario.nome,
+    usuario.email,
+    usuario.senha_hash,
+    usuario.nivel_dificuldade,
+    usuario.id_liga
+  ];
+  const resultado = await pool.query(sql, valores);
+  return resultado.rows[0];
+}
+
+// atualiza o ultimo acesso do usuario no momento do login
+async function atualizarUltimoAcesso(id) {
+  const sql = 'UPDATE Usuario SET ultimo_acesso = CURRENT_TIMESTAMP WHERE id_usuario = $1';
+  await pool.query(sql, [id]);
+}
+
+module.exports = { buscarPorEmail, buscarPorId, criar, atualizarUltimoAcesso };
