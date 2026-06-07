@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const usuarioModel = require('../models/usuarioModel');
 
 // valida os campos obrigatorios do cadastro
 function validarCadastro(corpo) {
@@ -52,4 +53,24 @@ async function login(req, res) {
   }
 }
 
-module.exports = { cadastrar, login };
+async function perfil(req, res) {
+  try {
+    const usuario = await usuarioModel.buscarPorId(req.usuario.id_usuario);
+    if (!usuario) {
+      return res.status(404).json({ erro: 'usuario nao encontrado' });
+    }
+    const dados = {
+      id_usuario: usuario.id_usuario,
+      nome: usuario.nome,
+      email: usuario.email,
+      nivel_dificuldade: usuario.nivel_dificuldade,
+      id_liga: usuario.id_liga,
+      dias_consecutivos: usuario.dias_consecutivos
+    };
+    return res.status(200).json(dados);
+  } catch (erro) {
+    return res.status(500).json({ erro: 'erro interno do servidor' });
+  }
+}
+
+module.exports = { cadastrar, login, perfil };

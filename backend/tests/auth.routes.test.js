@@ -1,6 +1,7 @@
 process.env.JWT_SECRET = 'segredo_teste';
 
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const usuarioModel = require('../src/models/usuarioModel');
 
@@ -52,5 +53,31 @@ describe('POST /auth/login', () => {
 
     expect(resposta.status).toBe(200);
     expect(resposta.body.token).toBeDefined();
+  });
+});
+
+describe('GET /auth/perfil', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('retorna 401 sem token', async () => {
+    const resposta = await request(app).get('/auth/perfil');
+    expect(resposta.status).toBe(401);
+  });
+
+  test('retorna 200 e os dados com token valido', async () => {
+    usuarioModel.buscarPorId.mockResolvedValue({
+      id_usuario: 1, nome: 'ana', email: 'a@a.com',
+      nivel_dificuldade: 'F', id_liga: 1, dias_consecutivos: 0
+    });
+    const token = jwt.sign({ id_usuario: 1, email: 'a@a.com' }, 'segredo_teste');
+
+    const resposta = await request(app)
+      .get('/auth/perfil')
+      .set('Authorization', 'Bearer ' + token);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.id_usuario).toBe(1);
   });
 });
