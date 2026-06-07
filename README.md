@@ -87,3 +87,57 @@ Controle de versão: Git/GitHub
 
 
 # Como executar o programa
+
+O projeto é dividido em **frontend** (React + Vite, na raiz) e **backend** (Node.js + Express, na pasta `backend/`). É preciso ter instalados: **Node.js** e **PostgreSQL**.
+
+## 1. Backend (API + banco de dados)
+
+```bash
+cd backend
+npm install
+```
+
+Copie o arquivo de exemplo de variáveis de ambiente e preencha com as suas credenciais do PostgreSQL:
+
+```bash
+cp .env.example .env
+# edite o .env: DB_USER, DB_PASSWORD, DB_NAME, JWT_SECRET, etc.
+```
+
+Crie o banco de dados e aplique o schema (tabelas, views e funções):
+
+```bash
+createdb healthy_challenge          # ou: psql -c "CREATE DATABASE healthy_challenge;"
+node scripts/aplicar_schema.js      # aplica o script SQL no banco configurado no .env
+```
+
+Suba a API:
+
+```bash
+npm run dev                         # sobe em http://localhost:3001
+```
+
+Para rodar os testes automatizados (Jest):
+
+```bash
+npm test
+```
+
+### Rotas de autenticação disponíveis
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/health` | Verifica se a API está no ar |
+| POST | `/auth/cadastro` | Cadastra um usuário (`nome`, `email`, `senha`, `nivel_dificuldade` opcional) |
+| POST | `/auth/login` | Faz login e retorna um token JWT |
+| GET | `/auth/perfil` | Dados do usuário logado (requer header `Authorization: Bearer <token>`) |
+
+## 2. Frontend (interface web)
+
+Em outro terminal, a partir da raiz do projeto:
+
+```bash
+npm install
+npm run dev                         # sobe em http://localhost:5173
+```
+
