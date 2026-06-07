@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Variaveis de ambiente
+.env
+.env.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +26,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude
+.claude/
+.claude/*
+CLAUDE.md
+CLAUDE.local.md
+.mcp.json
+.superpowers/
+docs/superpowers/
