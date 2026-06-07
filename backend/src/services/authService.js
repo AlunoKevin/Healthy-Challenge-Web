@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const usuarioModel = require('../models/usuarioModel');
 
 // gera o hash da senha usando bcrypt
@@ -30,4 +31,44 @@ async function cadastrar(dados) {
   return usuario;
 }
 
-module.exports = { getHashSenha, cadastrar };
+// gera o token jwt com os dados basicos do usuario
+function gerarToken(usuario) {
+  const payload = { id_usuario: usuario.id_usuario, email: usuario.email };
+  const token = jwt.sign(
+    payload,
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES || '1d' }
+  );
+  return token;
+}
+
+// regra de login: confere email e senha e devolve o token e os dados do usuario
+async function login(email, senha) {
+  const usuario = await usuarioModel.buscarPorEmail(email);
+  if (!usuario) {
+    const erro = new Error('email ou senha invalidos');
+    erro.status = 401;
+    throw erro;
+  }
+
+  const senhaConfere = await bcrypt.compare(senha, usuario.senha_hash);
+  if (!senhaConfere) {
+    const erro = new Error('email ou senha invalidos');
+    erro.status = 401;
+    throw erro;
+  }
+
+  await usuarioModel.atualizarUltimoAcesso(usuario.id_usuario);
+
+  const token = gerarToken(usuario);
+  const dadosUsuario = {
+    id_usuario: usuario.id_usuario,
+    nome: usuario.nome,
+    email: usuario.email,
+    nivel_dificuldade: usuario.nivel_dificuldade,
+    id_liga: usuario.id_liga
+  };
+  return { token: token, usuario: dadosUsuario };
+}
+
+module.exports = { getHashSenha, cadastrar, gerarToken, login };
