@@ -201,3 +201,11 @@
   .auth-form-container { padding: 2rem; }
   .form-row { flex-direction: column; }
 }
+
+.auth-error {
+  color: #c0392b;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin: 4px 0 8px;
+}
