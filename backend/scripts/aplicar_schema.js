@@ -5,7 +5,7 @@ const pool = require('../src/config/conexao');
 
 async function aplicar() {
   const caminho = path.join(
-    __dirname, '..', '..', 'docs', 'MODELO-ER', 'BD_Script_Completo?.sql'
+    __dirname, '..', '..', 'docs', 'MODELO-ER', 'BD_Script_Completo.sql'
   );
   const sql = fs.readFileSync(caminho, 'utf8');
   await pool.query(sql);
