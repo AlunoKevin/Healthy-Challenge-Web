@@ -32,9 +32,21 @@ async function criar(usuario) {
   return resultado.rows[0];
 }
 
-// atualiza o ultimo acesso do usuario no momento do login
+// atualiza o ultimo acesso e a sequencia de dias consecutivos do usuario no login
 async function atualizarUltimoAcesso(id) {
-  const sql = 'UPDATE Usuario SET ultimo_acesso = CURRENT_TIMESTAMP WHERE id_usuario = $1';
+  const sql = `
+    UPDATE Usuario
+    SET
+      dias_consecutivos = CASE
+        WHEN ultimo_acesso IS NULL THEN 1
+        WHEN ultimo_acesso::date = CURRENT_DATE THEN GREATEST(COALESCE(dias_consecutivos, 0), 1)
+        WHEN ultimo_acesso::date = CURRENT_DATE - 1 THEN COALESCE(dias_consecutivos, 0) + 1
+        ELSE 1
+      END,
+      ultimo_acesso = CURRENT_TIMESTAMP
+    WHERE id_usuario = $1
+  `;
+
   await pool.query(sql, [id]);
 }
 
