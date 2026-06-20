@@ -30,7 +30,8 @@ Banco de Dados
 
 PostgreSQL (principal)
 
-![Modelo conceitual imagem MER] (docs/MODELO-ER/MER_UPDATED_HCW.png)
+![Modelo conceitual imagem MER](docs/MODELO-ER/MER_UPDATED_HCW.png)
+
 
 
 # Integrantes
