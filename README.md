@@ -109,6 +109,7 @@ Crie o banco de dados e aplique o schema (tabelas, views e funções):
 ```bash
 createdb healthy_challenge          # ou: psql -c "CREATE DATABASE healthy_challenge;"
 node scripts/aplicar_schema.js      # aplica o script SQL no banco configurado no .env
+node scripts/inserir_dados_test.js  # insere dados iniciais no BD para teste e debug futuro usado para garantir que funcionalidades diretamente atreladas ao BD funcionem como Leaderbord, Rankings, etc.
 ```
 
 Suba a API:
@@ -122,6 +123,12 @@ Para rodar os testes automatizados (Jest):
 ```bash
 npm test
 ```
+
+# Test global leaderboard (GLOBAL)
+curl http://localhost:3001/leaderboard/global
+
+# Test group leaderboard ("LOCAL") (trocar 1 por o group ID no output do script)
+curl http://localhost:3001/leaderboard/grupo/1
 
 ### Rotas de autenticação disponíveis
 
