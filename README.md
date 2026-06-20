@@ -24,35 +24,13 @@ O projeto também se relaciona diretamente com o Objetivo de Desenvolvimento Sus
 O público-alvo do Healthy Challenge Web é composto principalmente por estudantes universitários e adultos que desejam desenvolver e manter hábitos saudáveis de forma mais motivadora e interativa. A plataforma busca atender pessoas que possuem rotinas corridas e dificuldade em manter constância em práticas de bem-estar físico e mental, utilizando elementos de gamificação, competição social e desafios para aumentar o engajamento e incentivar uma rotina mais saudável.
 
 
-# Banco de dados - preliminar
+# Banco de dados 
 
 Banco de Dados
 
 PostgreSQL (principal)
 
-Entidades principais:
-
-Usuário
-
-Desafio/Tarefa
-
-Hábito
-
-Liga
-
-Pontuação
-
-Leaderboard
-
-Amizade
-
-Grupo/Subgrupo
-
-Histórico de atividades
-
-Sequência de dias (streak)
-
-Preferência de dificuldade
+![Modelo conceitual imagem MER] (docs/MODELO-ER/MER_UPDATED_HCW.png)
 
 
 # Integrantes
