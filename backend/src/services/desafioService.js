@@ -33,6 +33,12 @@ async function concluir(id_usuario, id_desafio) {
     throw erro;
   }
 
+  if (!desafio.ativo) {
+    const erro = new Error('desafio inativo');
+    erro.status = 400;
+    throw erro;
+  }
+
   const inscrito = await desafioModel.jaInscrito(id_usuario, id_desafio);
   if (!inscrito) {
     const erro = new Error('usuario nao esta inscrito neste desafio');
@@ -55,4 +61,9 @@ async function meusDesafios(id_usuario) {
   return desafioModel.buscarDoUsuario(id_usuario);
 }
 
-module.exports = { listar, inscrever, concluir, meusDesafios };
+// retorna os desafios concluidos pelo usuario
+async function meusConcluidos(id_usuario) {
+  return desafioModel.buscarConcluidosDoUsuario(id_usuario);
+}
+
+module.exports = { listar, inscrever, concluir, meusDesafios, meusConcluidos };

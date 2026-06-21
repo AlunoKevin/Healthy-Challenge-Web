@@ -96,6 +96,30 @@ describe('desafioModel.jaConcluiu', () => {
   });
 });
 
+describe('desafioModel.buscarConcluidosDoUsuario', () => {
+  test('retorna desafios concluidos pelo usuario', async () => {
+    pool.query.mockResolvedValue({
+      rows: [
+        { id_desafio: 1, titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100, pontuacao: 100, data_conclusao: '2026-06-21' }
+      ]
+    });
+
+    const resultado = await desafioModel.buscarConcluidosDoUsuario(1);
+
+    expect(resultado).toHaveLength(1);
+    expect(resultado[0].titulo).toBe('Beber agua');
+    expect(resultado[0].pontuacao).toBe(100);
+  });
+
+  test('retorna lista vazia quando usuario nao tem conclusoes', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+
+    const resultado = await desafioModel.buscarConcluidosDoUsuario(99);
+
+    expect(resultado).toHaveLength(0);
+  });
+});
+
 describe('desafioModel.buscarDoUsuario', () => {
   test('retorna os desafios em que o usuario esta inscrito', async () => {
     pool.query.mockResolvedValue({

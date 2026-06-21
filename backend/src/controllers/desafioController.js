@@ -50,4 +50,14 @@ async function concluir(req, res) {
   }
 }
 
-module.exports = { listar, meusDesafios, inscrever, concluir };
+// retorna os desafios concluidos pelo usuario autenticado
+async function meusConcluidos(req, res) {
+  try {
+    const concluidos = await desafioService.meusConcluidos(req.usuario.id_usuario);
+    return res.status(200).json(concluidos);
+  } catch (erro) {
+    return res.status(500).json({ erro: 'erro interno do servidor' });
+  }
+}
+
+module.exports = { listar, meusDesafios, inscrever, concluir, meusConcluidos };

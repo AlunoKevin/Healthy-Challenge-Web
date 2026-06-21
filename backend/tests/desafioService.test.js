@@ -58,7 +58,7 @@ describe('desafioService.concluir', () => {
   });
 
   test('conclui quando inscrito e nao concluiu ainda', async () => {
-    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200 });
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: true });
     desafioModel.jaInscrito.mockResolvedValue(true);
     desafioModel.jaConcluiu.mockResolvedValue(false);
     desafioModel.concluir.mockResolvedValue({ id_conclusao: 1, pontuacao: 200 });
@@ -70,7 +70,7 @@ describe('desafioService.concluir', () => {
   });
 
   test('lanca 400 quando usuario nao esta inscrito', async () => {
-    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200 });
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: true });
     desafioModel.jaInscrito.mockResolvedValue(false);
 
     await expect(desafioService.concluir(1, 1))
@@ -78,12 +78,37 @@ describe('desafioService.concluir', () => {
   });
 
   test('lanca 409 quando ja concluiu', async () => {
-    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200 });
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: true });
     desafioModel.jaInscrito.mockResolvedValue(true);
     desafioModel.jaConcluiu.mockResolvedValue(true);
 
     await expect(desafioService.concluir(1, 1))
       .rejects.toHaveProperty('status', 409);
+  });
+
+  test('lanca 400 quando desafio esta inativo', async () => {
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: false });
+    desafioModel.jaInscrito.mockResolvedValue(true);
+
+    await expect(desafioService.concluir(1, 1))
+      .rejects.toHaveProperty('status', 400);
+  });
+});
+
+describe('desafioService.meusConcluidos', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('retorna desafios concluidos do usuario', async () => {
+    desafioModel.buscarConcluidosDoUsuario.mockResolvedValue([
+      { id_desafio: 1, titulo: 'Beber agua', pontuacao: 100 }
+    ]);
+
+    const resultado = await desafioService.meusConcluidos(1);
+
+    expect(resultado).toHaveLength(1);
+    expect(desafioModel.buscarConcluidosDoUsuario).toHaveBeenCalledWith(1);
   });
 });
 

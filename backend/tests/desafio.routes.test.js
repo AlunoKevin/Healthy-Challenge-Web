@@ -50,6 +50,30 @@ describe('GET /desafios/meus', () => {
   });
 });
 
+describe('GET /desafios/concluidos', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('retorna 401 sem token', async () => {
+    const resposta = await request(app).get('/desafios/concluidos');
+    expect(resposta.status).toBe(401);
+  });
+
+  test('retorna 200 com lista de concluidos com token valido', async () => {
+    desafioModel.buscarConcluidosDoUsuario.mockResolvedValue([
+      { id_desafio: 1, titulo: 'Beber agua', pontuacao: 100 }
+    ]);
+
+    const resposta = await request(app)
+      .get('/desafios/concluidos')
+      .set('Authorization', 'Bearer ' + tokenValido);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body).toHaveLength(1);
+  });
+});
+
 describe('POST /desafios/:id/inscrever', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -105,7 +129,7 @@ describe('POST /desafios/:id/concluir', () => {
   });
 
   test('retorna 200 ao concluir com token valido', async () => {
-    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200 });
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: true });
     desafioModel.jaInscrito.mockResolvedValue(true);
     desafioModel.jaConcluiu.mockResolvedValue(false);
     desafioModel.concluir.mockResolvedValue({ id_conclusao: 1, pontuacao: 200 });
@@ -119,7 +143,7 @@ describe('POST /desafios/:id/concluir', () => {
   });
 
   test('retorna 409 quando ja concluiu', async () => {
-    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200 });
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: true });
     desafioModel.jaInscrito.mockResolvedValue(true);
     desafioModel.jaConcluiu.mockResolvedValue(true);
 
@@ -131,8 +155,19 @@ describe('POST /desafios/:id/concluir', () => {
   });
 
   test('retorna 400 quando nao esta inscrito', async () => {
-    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200 });
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: true });
     desafioModel.jaInscrito.mockResolvedValue(false);
+
+    const resposta = await request(app)
+      .post('/desafios/1/concluir')
+      .set('Authorization', 'Bearer ' + tokenValido);
+
+    expect(resposta.status).toBe(400);
+  });
+
+  test('retorna 400 quando desafio esta inativo', async () => {
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1, pontuacao_prevista: 200, ativo: false });
+    desafioModel.jaInscrito.mockResolvedValue(true);
 
     const resposta = await request(app)
       .post('/desafios/1/concluir')

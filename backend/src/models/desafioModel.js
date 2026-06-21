@@ -69,4 +69,18 @@ async function buscarDoUsuario(id_usuario) {
   return resultado.rows;
 }
 
-module.exports = { listarAtivos, buscarPorId, inscrever, jaInscrito, concluir, jaConcluiu, buscarDoUsuario };
+// retorna os desafios que o usuario ja concluiu
+async function buscarConcluidosDoUsuario(id_usuario) {
+  const sql = `
+    SELECT d.id_desafio, d.titulo, d.descricao, d.pontuacao_prevista,
+           cd.pontuacao, cd.data_conclusao
+    FROM Desafio d
+    JOIN Conclusao_Desafio cd ON d.id_desafio = cd.id_desafio
+    WHERE cd.id_usuario = $1
+    ORDER BY cd.data_conclusao DESC
+  `;
+  const resultado = await pool.query(sql, [id_usuario]);
+  return resultado.rows;
+}
+
+module.exports = { listarAtivos, buscarPorId, inscrever, jaInscrito, concluir, jaConcluiu, buscarDoUsuario, buscarConcluidosDoUsuario };
