@@ -16,4 +16,9 @@ async function buscarMinhaLiga(idUsuario) {
   return liga;
 }
 
-module.exports = { listar, buscarMinhaLiga };
+// atualiza a liga do usuario com base na pontuacao total
+async function atualizarProgressao(idUsuario, pontuacaoTotal) {
+  return ligaModel.atualizarLiga(idUsuario, pontuacaoTotal);
+}
+
+module.exports = { listar, buscarMinhaLiga, atualizarProgressao };

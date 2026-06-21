@@ -42,3 +42,27 @@ describe('ligaService.buscarMinhaLiga', () => {
       .rejects.toHaveProperty('status', 404);
   });
 });
+
+describe('ligaService.atualizarProgressao', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('promove usuario para liga superior quando pontuacao sobe', async () => {
+    ligaModel.atualizarLiga.mockResolvedValue({ id_usuario: 1, id_liga: 2 });
+    const resultado = await ligaService.atualizarProgressao(1, 500);
+    expect(ligaModel.atualizarLiga).toHaveBeenCalledWith(1, 500);
+    expect(resultado.id_liga).toBe(2);
+  });
+
+  test('rebaixa usuario para liga inferior quando pontuacao cai', async () => {
+    ligaModel.atualizarLiga.mockResolvedValue({ id_usuario: 1, id_liga: 1 });
+    const resultado = await ligaService.atualizarProgressao(1, 100);
+    expect(ligaModel.atualizarLiga).toHaveBeenCalledWith(1, 100);
+    expect(resultado.id_liga).toBe(1);
+  });
+
+  test('retorna objeto com id_usuario e id_liga', async () => {
+    ligaModel.atualizarLiga.mockResolvedValue({ id_usuario: 7, id_liga: 4 });
+    const resultado = await ligaService.atualizarProgressao(7, 3500);
+    expect(resultado).toEqual({ id_usuario: 7, id_liga: 4 });
+  });
+});
