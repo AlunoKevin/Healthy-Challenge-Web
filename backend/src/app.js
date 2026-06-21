@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
+const desafioRoutes = require('./routes/desafioRoutes');
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/leaderboard', leaderboardRoutes);
+app.use('/desafios', desafioRoutes);
 
 module.exports = app;
