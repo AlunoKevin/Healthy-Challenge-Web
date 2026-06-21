@@ -69,47 +69,48 @@ Controle de versão: Git/GitHub
 
 O projeto é dividido em **frontend** (React + Vite, na raiz) e **backend** (Node.js + Express, na pasta `backend/`). É preciso ter instalados: **Node.js** e **PostgreSQL**.
 
-## 1. Backend (API + banco de dados)
-
-```bash
-cd backend
-npm install
-```
-
-Copie o arquivo de exemplo de variáveis de ambiente e preencha com as suas credenciais do PostgreSQL:
-
-```bash
-cp .env.example .env
-# edite o .env: DB_USER, DB_PASSWORD, DB_NAME, JWT_SECRET, etc.
-```
-
-Crie o banco de dados e aplique o schema (tabelas, views e funções):
+## 1. Configurar o banco de dados (apenas na primeira vez)
 
 ```bash
 createdb healthy_challenge          # ou: psql -c "CREATE DATABASE healthy_challenge;"
-node scripts/aplicar_schema.js      # aplica o script SQL no banco configurado no .env
-node scripts/inserir_dados_test.js  # insere dados iniciais no BD para teste e debug futuro usado para garantir que funcionalidades diretamente atreladas ao BD funcionem como Leaderbord, Rankings, etc.
 ```
 
-Suba a API:
+Na pasta `backend/`, copie o arquivo de variáveis de ambiente e preencha com suas credenciais do PostgreSQL:
 
 ```bash
-npm run dev                         # sobe em http://localhost:3001
+cp backend/.env.example backend/.env
+# edite backend/.env: DB_USER, DB_PASSWORD, DB_NAME, JWT_SECRET, etc.
 ```
 
-Para rodar os testes automatizados (Jest):
+Aplique o schema e insira os dados de teste:
 
 ```bash
-npm test
+node backend/scripts/aplicar_schema.js
+node backend/scripts/inserir_dados_test.js
 ```
 
-# Test global leaderboard (GLOBAL)
-curl http://localhost:3001/leaderboard/global
+## 2. Instalar dependências
 
-# Test group leaderboard ("LOCAL") (trocar 1 por o group ID no output do script)
-curl http://localhost:3001/leaderboard/grupo/1
+```bash
+npm install                         # dependências do frontend (raiz)
+npm install --prefix backend        # dependências do backend
+```
 
-### Rotas de autenticação disponíveis
+## 3. Rodar o projeto completo
+
+```bash
+npm start                           # sobe backend em http://localhost:3001 e frontend em http://localhost:5173
+```
+
+> **Caso a porta 3001 já esteja em uso:** execute `fuser -k 3001/tcp` antes de rodar `npm start`.
+
+Para rodar os testes automatizados do backend (Jest):
+
+```bash
+npm test --prefix backend
+```
+
+### Rotas da API disponíveis
 
 | Método | Rota | Descrição |
 |---|---|---|
@@ -117,13 +118,23 @@ curl http://localhost:3001/leaderboard/grupo/1
 | POST | `/auth/cadastro` | Cadastra um usuário (`nome`, `email`, `senha`, `nivel_dificuldade` opcional) |
 | POST | `/auth/login` | Faz login e retorna um token JWT |
 | GET | `/auth/perfil` | Dados do usuário logado (requer header `Authorization: Bearer <token>`) |
+| GET | `/leaderboard/global` | Ranking global |
+| GET | `/leaderboard/grupo/:idGrupo` | Ranking de um grupo |
 
-## 2. Frontend (interface web)
-
-Em outro terminal, a partir da raiz do projeto:
+Exemplos de teste via curl:
 
 ```bash
-npm install
-npm run dev                         # sobe em http://localhost:5173
+curl http://localhost:3001/leaderboard/global
+curl http://localhost:3001/leaderboard/grupo/1   # trocar 1 pelo ID do grupo
+```
+
+## Rodar frontend e backend separadamente (opcional)
+
+```bash
+# backend
+npm run dev:back                    # sobe em http://localhost:3001
+
+# frontend (outro terminal)
+npm run dev:front                   # sobe em http://localhost:5173
 ```
 

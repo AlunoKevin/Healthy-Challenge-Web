@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:front": "vite",
+    "dev:back": "npm --prefix backend run dev",
+    "start": "concurrently -n back,front -c blue,green \"npm run dev:back\" \"npm run dev:front\""
   },
   "dependencies": {
     "react": "^19.2.6",
@@ -18,6 +21,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^10.0.3",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
