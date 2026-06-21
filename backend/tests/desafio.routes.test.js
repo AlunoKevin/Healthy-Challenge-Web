@@ -8,6 +8,7 @@ const desafioModel = require('../src/models/desafioModel');
 jest.mock('../src/models/desafioModel');
 
 const tokenValido = jwt.sign({ id_usuario: 1, email: 'a@a.com' }, 'segredo_teste');
+const tokenAdmin = jwt.sign({ tipo: 'admin', email: 'admin@a.com' }, 'segredo_teste');
 
 describe('GET /desafios', () => {
   beforeEach(() => {
@@ -174,5 +175,121 @@ describe('POST /desafios/:id/concluir', () => {
       .set('Authorization', 'Bearer ' + tokenValido);
 
     expect(resposta.status).toBe(400);
+  });
+});
+
+describe('POST /desafios', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('retorna 401 sem token', async () => {
+    const resposta = await request(app).post('/desafios').send({ titulo: 'Beber agua', pontuacao_prevista: 100 });
+    expect(resposta.status).toBe(401);
+  });
+
+  test('retorna 403 com token de usuario comum', async () => {
+    const resposta = await request(app)
+      .post('/desafios')
+      .set('Authorization', 'Bearer ' + tokenValido)
+      .send({ titulo: 'Beber agua', pontuacao_prevista: 100 });
+    expect(resposta.status).toBe(403);
+  });
+
+  test('retorna 201 ao criar desafio com token admin', async () => {
+    desafioModel.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, ativo: true });
+
+    const resposta = await request(app)
+      .post('/desafios')
+      .set('Authorization', 'Bearer ' + tokenAdmin)
+      .send({ titulo: 'Beber agua', pontuacao_prevista: 100 });
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.titulo).toBe('Beber agua');
+  });
+
+  test('retorna 400 quando titulo esta ausente', async () => {
+    const resposta = await request(app)
+      .post('/desafios')
+      .set('Authorization', 'Bearer ' + tokenAdmin)
+      .send({ pontuacao_prevista: 100 });
+    expect(resposta.status).toBe(400);
+  });
+});
+
+describe('PUT /desafios/:id', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('retorna 401 sem token', async () => {
+    const resposta = await request(app).put('/desafios/1').send({ titulo: 'Novo', pontuacao_prevista: 200 });
+    expect(resposta.status).toBe(401);
+  });
+
+  test('retorna 403 com token de usuario comum', async () => {
+    const resposta = await request(app)
+      .put('/desafios/1')
+      .set('Authorization', 'Bearer ' + tokenValido)
+      .send({ titulo: 'Novo', pontuacao_prevista: 200 });
+    expect(resposta.status).toBe(403);
+  });
+
+  test('retorna 200 ao atualizar com token admin', async () => {
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1 });
+    desafioModel.atualizar.mockResolvedValue({ id_desafio: 1, titulo: 'Novo', pontuacao_prevista: 200 });
+
+    const resposta = await request(app)
+      .put('/desafios/1')
+      .set('Authorization', 'Bearer ' + tokenAdmin)
+      .send({ titulo: 'Novo', pontuacao_prevista: 200 });
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.titulo).toBe('Novo');
+  });
+
+  test('retorna 404 quando desafio nao existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue(null);
+
+    const resposta = await request(app)
+      .put('/desafios/99')
+      .set('Authorization', 'Bearer ' + tokenAdmin)
+      .send({ titulo: 'Novo', pontuacao_prevista: 200 });
+
+    expect(resposta.status).toBe(404);
+  });
+});
+
+describe('DELETE /desafios/:id', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('retorna 401 sem token', async () => {
+    const resposta = await request(app).delete('/desafios/1');
+    expect(resposta.status).toBe(401);
+  });
+
+  test('retorna 403 com token de usuario comum', async () => {
+    const resposta = await request(app)
+      .delete('/desafios/1')
+      .set('Authorization', 'Bearer ' + tokenValido);
+    expect(resposta.status).toBe(403);
+  });
+
+  test('retorna 200 ao inativar com token admin', async () => {
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1 });
+    desafioModel.inativar.mockResolvedValue({ id_desafio: 1, ativo: false });
+
+    const resposta = await request(app)
+      .delete('/desafios/1')
+      .set('Authorization', 'Bearer ' + tokenAdmin);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.ativo).toBe(false);
+  });
+
+  test('retorna 404 quando desafio nao existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue(null);
+
+    const resposta = await request(app)
+      .delete('/desafios/99')
+      .set('Authorization', 'Bearer ' + tokenAdmin);
+
+    expect(resposta.status).toBe(404);
   });
 });

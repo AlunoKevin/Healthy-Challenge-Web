@@ -1,5 +1,10 @@
 const desafioService = require('../services/desafioService');
 
+// verifica se o valor e um inteiro positivo valido
+function idValido(valor) {
+  return Number.isInteger(Number(valor)) && Number(valor) > 0;
+}
+
 // retorna todos os desafios ativos
 async function listar(req, res) {
   try {
@@ -22,6 +27,9 @@ async function meusDesafios(req, res) {
 
 // inscreve o usuario autenticado no desafio informado
 async function inscrever(req, res) {
+  if (!idValido(req.params.id)) {
+    return res.status(400).json({ erro: 'id invalido' });
+  }
   try {
     const inscricao = await desafioService.inscrever(
       req.usuario.id_usuario,
@@ -37,6 +45,9 @@ async function inscrever(req, res) {
 
 // conclui o desafio para o usuario autenticado
 async function concluir(req, res) {
+  if (!idValido(req.params.id)) {
+    return res.status(400).json({ erro: 'id invalido' });
+  }
   try {
     const conclusao = await desafioService.concluir(
       req.usuario.id_usuario,
@@ -60,4 +71,54 @@ async function meusConcluidos(req, res) {
   }
 }
 
-module.exports = { listar, meusDesafios, inscrever, concluir, meusConcluidos };
+// cria um novo desafio com validacao dos campos obrigatorios
+async function criar(req, res) {
+  const { titulo, descricao, pontuacao_prevista } = req.body;
+  if (!titulo || !pontuacao_prevista || Number(pontuacao_prevista) <= 0) {
+    return res.status(400).json({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  }
+  try {
+    const desafio = await desafioService.criar(titulo, descricao || null, pontuacao_prevista);
+    return res.status(201).json(desafio);
+  } catch (erro) {
+    const status = erro.status || 500;
+    const mensagem = status === 500 ? 'erro interno do servidor' : erro.message;
+    return res.status(status).json({ erro: mensagem });
+  }
+}
+
+// atualiza dados de um desafio existente
+async function atualizar(req, res) {
+  if (!idValido(req.params.id)) {
+    return res.status(400).json({ erro: 'id invalido' });
+  }
+  const { titulo, descricao, pontuacao_prevista } = req.body;
+  if (!titulo || !pontuacao_prevista || Number(pontuacao_prevista) <= 0) {
+    return res.status(400).json({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  }
+  try {
+    const desafio = await desafioService.atualizar(req.params.id, titulo, descricao || null, pontuacao_prevista);
+    return res.status(200).json(desafio);
+  } catch (erro) {
+    const status = erro.status || 500;
+    const mensagem = status === 500 ? 'erro interno do servidor' : erro.message;
+    return res.status(status).json({ erro: mensagem });
+  }
+}
+
+// inativa um desafio existente
+async function inativar(req, res) {
+  if (!idValido(req.params.id)) {
+    return res.status(400).json({ erro: 'id invalido' });
+  }
+  try {
+    const desafio = await desafioService.inativar(req.params.id);
+    return res.status(200).json(desafio);
+  } catch (erro) {
+    const status = erro.status || 500;
+    const mensagem = status === 500 ? 'erro interno do servidor' : erro.message;
+    return res.status(status).json({ erro: mensagem });
+  }
+}
+
+module.exports = { listar, meusDesafios, inscrever, concluir, meusConcluidos, criar, atualizar, inativar };

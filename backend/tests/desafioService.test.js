@@ -135,3 +135,68 @@ describe('desafioService.meusDesafios', () => {
     expect(desafioModel.buscarDoUsuario).toHaveBeenCalledWith(1);
   });
 });
+
+describe('desafioService.criar', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('cria desafio quando dados validos', async () => {
+    desafioModel.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, ativo: true });
+
+    const resultado = await desafioService.criar('Beber agua', null, 100);
+
+    expect(desafioModel.criar).toHaveBeenCalledWith('Beber agua', null, 100);
+    expect(resultado.titulo).toBe('Beber agua');
+  });
+
+  test('lanca 400 quando titulo esta ausente', async () => {
+    await expect(desafioService.criar('', null, 100))
+      .rejects.toHaveProperty('status', 400);
+  });
+
+  test('lanca 400 quando pontuacao_prevista esta ausente', async () => {
+    await expect(desafioService.criar('Beber agua', null, null))
+      .rejects.toHaveProperty('status', 400);
+  });
+});
+
+describe('desafioService.atualizar', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('atualiza quando desafio existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1 });
+    desafioModel.atualizar.mockResolvedValue({ id_desafio: 1, titulo: 'Novo', pontuacao_prevista: 200 });
+
+    const resultado = await desafioService.atualizar(1, 'Novo', null, 200);
+
+    expect(desafioModel.atualizar).toHaveBeenCalledWith(1, 'Novo', null, 200);
+    expect(resultado.titulo).toBe('Novo');
+  });
+
+  test('lanca 404 quando desafio nao existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue(null);
+
+    await expect(desafioService.atualizar(99, 'Novo', null, 100))
+      .rejects.toHaveProperty('status', 404);
+  });
+});
+
+describe('desafioService.inativar', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('inativa quando desafio existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue({ id_desafio: 1 });
+    desafioModel.inativar.mockResolvedValue({ id_desafio: 1, ativo: false });
+
+    const resultado = await desafioService.inativar(1);
+
+    expect(desafioModel.inativar).toHaveBeenCalledWith(1);
+    expect(resultado.ativo).toBe(false);
+  });
+
+  test('lanca 404 quando desafio nao existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue(null);
+
+    await expect(desafioService.inativar(99))
+      .rejects.toHaveProperty('status', 404);
+  });
+});

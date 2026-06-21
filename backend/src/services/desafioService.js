@@ -66,4 +66,41 @@ async function meusConcluidos(id_usuario) {
   return desafioModel.buscarConcluidosDoUsuario(id_usuario);
 }
 
-module.exports = { listar, inscrever, concluir, meusDesafios, meusConcluidos };
+// cria um novo desafio apos validar campos obrigatorios
+async function criar(titulo, descricao, pontuacao_prevista) {
+  if (!titulo) {
+    const erro = new Error('titulo e obrigatorio');
+    erro.status = 400;
+    throw erro;
+  }
+  if (pontuacao_prevista === null || pontuacao_prevista === undefined) {
+    const erro = new Error('pontuacao_prevista e obrigatoria');
+    erro.status = 400;
+    throw erro;
+  }
+  return desafioModel.criar(titulo, descricao, pontuacao_prevista);
+}
+
+// atualiza desafio apos verificar se existe
+async function atualizar(id, titulo, descricao, pontuacao_prevista) {
+  const desafio = await desafioModel.buscarPorId(id);
+  if (!desafio) {
+    const erro = new Error('desafio nao encontrado');
+    erro.status = 404;
+    throw erro;
+  }
+  return desafioModel.atualizar(id, titulo, descricao, pontuacao_prevista);
+}
+
+// inativa desafio apos verificar se existe
+async function inativar(id) {
+  const desafio = await desafioModel.buscarPorId(id);
+  if (!desafio) {
+    const erro = new Error('desafio nao encontrado');
+    erro.status = 404;
+    throw erro;
+  }
+  return desafioModel.inativar(id);
+}
+
+module.exports = { listar, inscrever, concluir, meusDesafios, meusConcluidos, criar, atualizar, inativar };

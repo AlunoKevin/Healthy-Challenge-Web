@@ -120,6 +120,16 @@ describe('desafioController.inscrever', () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ erro: 'erro interno do servidor' });
   });
+
+  test('retorna 400 quando id nao e um numero valido', async () => {
+    const req = { usuario: { id_usuario: 1 }, params: { id: 'abc' } };
+    const res = mockRes();
+
+    await desafioController.inscrever(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'id invalido' });
+  });
 });
 
 describe('desafioController.concluir', () => {
@@ -188,6 +198,16 @@ describe('desafioController.concluir', () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ erro: 'erro interno do servidor' });
   });
+
+  test('retorna 400 quando id nao e um numero valido', async () => {
+    const req = { usuario: { id_usuario: 1 }, params: { id: 'xyz' } };
+    const res = mockRes();
+
+    await desafioController.concluir(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'id invalido' });
+  });
 });
 
 describe('desafioController.meusConcluidos', () => {
@@ -215,5 +235,175 @@ describe('desafioController.meusConcluidos', () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ erro: 'erro interno do servidor' });
+  });
+});
+
+describe('desafioController.criar', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('retorna 201 ao criar desafio com dados validos', async () => {
+    desafioService.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, ativo: true });
+    const req = { body: { titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(desafioService.criar).toHaveBeenCalledWith('Beber agua', null, 100);
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+
+  test('retorna 400 quando titulo esta ausente', async () => {
+    const req = { body: { pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  });
+
+  test('retorna 400 quando pontuacao_prevista esta ausente', async () => {
+    const req = { body: { titulo: 'Beber agua' } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  });
+
+  test('retorna 400 quando pontuacao_prevista e zero', async () => {
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 0 } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  });
+
+  test('retorna 500 quando service lanca erro sem status', async () => {
+    desafioService.criar.mockRejectedValue(new Error('falha'));
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'erro interno do servidor' });
+  });
+});
+
+describe('desafioController.atualizar', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('retorna 200 ao atualizar com dados validos', async () => {
+    desafioService.atualizar.mockResolvedValue({ id_desafio: 1, titulo: 'Novo', pontuacao_prevista: 200 });
+    const req = { params: { id: '1' }, body: { titulo: 'Novo', descricao: null, pontuacao_prevista: 200 } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(desafioService.atualizar).toHaveBeenCalledWith('1', 'Novo', null, 200);
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  test('retorna 400 quando id nao e valido', async () => {
+    const req = { params: { id: 'abc' }, body: { titulo: 'Novo', pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'id invalido' });
+  });
+
+  test('retorna 400 quando titulo esta ausente', async () => {
+    const req = { params: { id: '1' }, body: { pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  });
+
+  test('retorna 400 quando pontuacao_prevista e zero', async () => {
+    const req = { params: { id: '1' }, body: { titulo: 'Novo', pontuacao_prevista: 0 } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  });
+
+  test('retorna 404 quando desafio nao existe', async () => {
+    const erro = new Error('desafio nao encontrado');
+    erro.status = 404;
+    desafioService.atualizar.mockRejectedValue(erro);
+    const req = { params: { id: '99' }, body: { titulo: 'Novo', pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+  });
+
+  test('retorna 500 quando service lanca erro sem status', async () => {
+    desafioService.atualizar.mockRejectedValue(new Error('falha'));
+    const req = { params: { id: '1' }, body: { titulo: 'Novo', pontuacao_prevista: 100 } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+});
+
+describe('desafioController.inativar', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  test('retorna 200 ao inativar desafio existente', async () => {
+    desafioService.inativar.mockResolvedValue({ id_desafio: 1, ativo: false });
+    const req = { params: { id: '1' } };
+    const res = mockRes();
+
+    await desafioController.inativar(req, res);
+
+    expect(desafioService.inativar).toHaveBeenCalledWith('1');
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  test('retorna 400 quando id nao e valido', async () => {
+    const req = { params: { id: 'abc' } };
+    const res = mockRes();
+
+    await desafioController.inativar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'id invalido' });
+  });
+
+  test('retorna 404 quando desafio nao existe', async () => {
+    const erro = new Error('desafio nao encontrado');
+    erro.status = 404;
+    desafioService.inativar.mockRejectedValue(erro);
+    const req = { params: { id: '99' } };
+    const res = mockRes();
+
+    await desafioController.inativar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+  });
+
+  test('retorna 500 quando service lanca erro sem status', async () => {
+    desafioService.inativar.mockRejectedValue(new Error('falha'));
+    const req = { params: { id: '1' } };
+    const res = mockRes();
+
+    await desafioController.inativar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
   });
 });

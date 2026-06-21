@@ -83,4 +83,38 @@ async function buscarConcluidosDoUsuario(id_usuario) {
   return resultado.rows;
 }
 
-module.exports = { listarAtivos, buscarPorId, inscrever, jaInscrito, concluir, jaConcluiu, buscarDoUsuario, buscarConcluidosDoUsuario };
+// cria um novo desafio
+async function criar(titulo, descricao, pontuacao_prevista) {
+  const sql = `
+    INSERT INTO Desafio (titulo, descricao, pontuacao_prevista, ativo)
+    VALUES ($1, $2, $3, true)
+    RETURNING *
+  `;
+  const resultado = await pool.query(sql, [titulo, descricao, pontuacao_prevista]);
+  return resultado.rows[0];
+}
+
+// atualiza dados de um desafio existente
+async function atualizar(id, titulo, descricao, pontuacao_prevista) {
+  const sql = `
+    UPDATE Desafio
+    SET titulo = $1, descricao = $2, pontuacao_prevista = $3
+    WHERE id_desafio = $4
+    RETURNING *
+  `;
+  const resultado = await pool.query(sql, [titulo, descricao, pontuacao_prevista, id]);
+  return resultado.rows[0] || null;
+}
+
+// marca um desafio como inativo (soft delete)
+async function inativar(id) {
+  const sql = `
+    UPDATE Desafio SET ativo = false
+    WHERE id_desafio = $1
+    RETURNING *
+  `;
+  const resultado = await pool.query(sql, [id]);
+  return resultado.rows[0] || null;
+}
+
+module.exports = { listarAtivos, buscarPorId, inscrever, jaInscrito, concluir, jaConcluiu, buscarDoUsuario, buscarConcluidosDoUsuario, criar, atualizar, inativar };

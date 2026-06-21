@@ -142,3 +142,68 @@ describe('desafioModel.buscarDoUsuario', () => {
     expect(resultado).toHaveLength(0);
   });
 });
+
+describe('desafioModel.criar', () => {
+  test('retorna o desafio criado', async () => {
+    pool.query.mockResolvedValue({
+      rows: [{ id_desafio: 1, titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100, ativo: true }]
+    });
+
+    const resultado = await desafioModel.criar('Beber agua', null, 100);
+
+    expect(resultado.titulo).toBe('Beber agua');
+    expect(resultado.ativo).toBe(true);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO Desafio'),
+      ['Beber agua', null, 100]
+    );
+  });
+});
+
+describe('desafioModel.atualizar', () => {
+  test('retorna o desafio atualizado', async () => {
+    pool.query.mockResolvedValue({
+      rows: [{ id_desafio: 1, titulo: 'Novo titulo', descricao: 'desc', pontuacao_prevista: 200, ativo: true }]
+    });
+
+    const resultado = await desafioModel.atualizar(1, 'Novo titulo', 'desc', 200);
+
+    expect(resultado.titulo).toBe('Novo titulo');
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('UPDATE Desafio'),
+      ['Novo titulo', 'desc', 200, 1]
+    );
+  });
+
+  test('retorna null quando desafio nao existe', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+
+    const resultado = await desafioModel.atualizar(99, 'Titulo', null, 100);
+
+    expect(resultado).toBeNull();
+  });
+});
+
+describe('desafioModel.inativar', () => {
+  test('retorna o desafio inativado', async () => {
+    pool.query.mockResolvedValue({
+      rows: [{ id_desafio: 1, titulo: 'Beber agua', ativo: false }]
+    });
+
+    const resultado = await desafioModel.inativar(1);
+
+    expect(resultado.ativo).toBe(false);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('UPDATE Desafio SET ativo = false'),
+      [1]
+    );
+  });
+
+  test('retorna null quando desafio nao existe', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+
+    const resultado = await desafioModel.inativar(99);
+
+    expect(resultado).toBeNull();
+  });
+});
