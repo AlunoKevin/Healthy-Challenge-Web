@@ -93,6 +93,13 @@ describe('desafioService.concluir', () => {
     await expect(desafioService.concluir(1, 1))
       .rejects.toHaveProperty('status', 400);
   });
+
+  test('lanca 404 quando desafio nao existe', async () => {
+    desafioModel.buscarPorId.mockResolvedValue(null);
+
+    await expect(desafioService.concluir(1, 99))
+      .rejects.toHaveProperty('status', 404);
+  });
 });
 
 describe('desafioService.meusConcluidos', () => {
