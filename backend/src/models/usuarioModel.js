@@ -50,4 +50,15 @@ async function atualizarUltimoAcesso(id) {
   await pool.query(sql, [id]);
 }
 
-module.exports = { buscarPorEmail, buscarPorId, criar, atualizarUltimoAcesso };
+// busca estatisticas de pontuacao do usuario na view
+async function buscarEstatisticas(id) {
+  const sql = `
+    SELECT desafios_concluidos, pontos_totais, media_pontos
+    FROM vw_estatisticas_usuario
+    WHERE id_usuario = $1
+  `;
+  const resultado = await pool.query(sql, [id]);
+  return resultado.rows[0] || { desafios_concluidos: 0, pontos_totais: 0, media_pontos: null };
+}
+
+module.exports = { buscarPorEmail, buscarPorId, criar, atualizarUltimoAcesso, buscarEstatisticas };

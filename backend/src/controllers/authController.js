@@ -59,13 +59,16 @@ async function perfil(req, res) {
     if (!usuario) {
       return res.status(404).json({ erro: 'usuario nao encontrado' });
     }
+    const stats = await usuarioModel.buscarEstatisticas(req.usuario.id_usuario);
     const dados = {
       id_usuario: usuario.id_usuario,
       nome: usuario.nome,
       email: usuario.email,
       nivel_dificuldade: usuario.nivel_dificuldade,
       id_liga: usuario.id_liga,
-      dias_consecutivos: usuario.dias_consecutivos
+      dias_consecutivos: usuario.dias_consecutivos,
+      pontuacao_total: stats.pontos_totais,
+      desafios_concluidos: stats.desafios_concluidos
     };
     return res.status(200).json(dados);
   } catch (erro) {

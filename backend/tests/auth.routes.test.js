@@ -71,6 +71,9 @@ describe('GET /auth/perfil', () => {
       id_usuario: 1, nome: 'ana', email: 'a@a.com',
       nivel_dificuldade: 'F', id_liga: 1, dias_consecutivos: 0
     });
+    usuarioModel.buscarEstatisticas.mockResolvedValue({
+      desafios_concluidos: 0, pontos_totais: 0, media_pontos: null
+    });
     const token = jwt.sign({ id_usuario: 1, email: 'a@a.com' }, 'segredo_teste');
 
     const resposta = await request(app)
@@ -79,5 +82,24 @@ describe('GET /auth/perfil', () => {
 
     expect(resposta.status).toBe(200);
     expect(resposta.body.id_usuario).toBe(1);
+  });
+
+  test('retorna pontuacao_total no perfil', async () => {
+    usuarioModel.buscarPorId.mockResolvedValue({
+      id_usuario: 1, nome: 'ana', email: 'a@a.com',
+      nivel_dificuldade: 'F', id_liga: 2, dias_consecutivos: 3
+    });
+    usuarioModel.buscarEstatisticas.mockResolvedValue({
+      desafios_concluidos: 2, pontos_totais: 500, media_pontos: '250.00'
+    });
+    const token = jwt.sign({ id_usuario: 1, email: 'a@a.com' }, 'segredo_teste');
+
+    const resposta = await request(app)
+      .get('/auth/perfil')
+      .set('Authorization', 'Bearer ' + token);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.pontuacao_total).toBe(500);
+    expect(resposta.body.desafios_concluidos).toBe(2);
   });
 });
