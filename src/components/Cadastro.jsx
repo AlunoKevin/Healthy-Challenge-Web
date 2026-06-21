@@ -3,7 +3,7 @@ import '../styles/Auth.css';
 
 const API_URL = 'http://localhost:3001';
 
-const Cadastro = ({ onIrParaLogin }) => {
+const Cadastro = ({ onIrParaLogin, onSucesso }) => {
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
@@ -54,7 +54,7 @@ const Cadastro = ({ onIrParaLogin }) => {
         throw new Error(dados.erro || 'Erro ao cadastrar usuário.');
       }
 
-      alert('Cadastro realizado com sucesso! Faça login para continuar.');
+      alert('Cadastro realizado com sucesso!');
 
       setFormData({
         nome: '',
@@ -63,7 +63,7 @@ const Cadastro = ({ onIrParaLogin }) => {
         confirmarSenha: ''
       });
 
-      onIrParaLogin();
+      onSucesso();
     } catch (error) {
       setErro(error.message);
     } finally {

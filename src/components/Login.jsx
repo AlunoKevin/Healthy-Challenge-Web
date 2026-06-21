@@ -3,7 +3,7 @@ import '../styles/Auth.css';
 
 const API_URL = 'http://localhost:3001';
 
-const Login = ({ onIrParaCadastro }) => {
+const Login = ({ onIrParaCadastro, onSucesso }) => {
   const [credenciais, setCredenciais] = useState({
     email: '',
     senha: ''
@@ -49,6 +49,7 @@ const Login = ({ onIrParaCadastro }) => {
       localStorage.setItem('usuario', JSON.stringify(dados.usuario));
 
       alert('Login realizado com sucesso!');
+      onSucesso();
 
       // Futuramente, aqui será feito o redirecionamento para a página inicial.
     } catch (error) {
