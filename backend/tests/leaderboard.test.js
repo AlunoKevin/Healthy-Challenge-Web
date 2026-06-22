@@ -55,6 +55,58 @@ describe('leaderboardModel.buscarLeaderboardGlobal', () => {
   });
 });
 
+describe('buscarLeaderboardGlobal - paginacao', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('passa limite e deslocamento como parametros', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+    await leaderboardModel.buscarLeaderboardGlobal({ limite: 10, deslocamento: 20 });
+    expect(pool.query).toHaveBeenCalledWith(expect.any(String), [10, 20]);
+  });
+
+  test('usa limite 20 e deslocamento 0 por padrao', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+    await leaderboardModel.buscarLeaderboardGlobal({});
+    expect(pool.query).toHaveBeenCalledWith(expect.any(String), [20, 0]);
+  });
+});
+
+describe('buscarLeaderboardGlobal - filtro liga', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('passa id_liga como parametro quando fornecido', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+    await leaderboardModel.buscarLeaderboardGlobal({ idLiga: 3 });
+    const chamada = pool.query.mock.calls[0];
+    expect(chamada[1]).toContain(3);
+  });
+
+  test('retorna array vazio quando liga nao tem usuarios', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+    const resultado = await leaderboardModel.buscarLeaderboardGlobal({ idLiga: 99 });
+    expect(resultado).toEqual([]);
+  });
+});
+
+describe('buscarLeaderboardGlobal - filtro periodo', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('passa data_inicio e data_fim como parametros', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+    await leaderboardModel.buscarLeaderboardGlobal({ dataInicio: '2026-01-01', dataFim: '2026-06-30' });
+    const chamada = pool.query.mock.calls[0];
+    expect(chamada[1]).toContain('2026-01-01');
+    expect(chamada[1]).toContain('2026-06-30');
+  });
+
+  test('passa apenas data_inicio quando data_fim nao fornecida', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+    await leaderboardModel.buscarLeaderboardGlobal({ dataInicio: '2026-01-01' });
+    const chamada = pool.query.mock.calls[0];
+    expect(chamada[1]).toContain('2026-01-01');
+  });
+});
+
 describe('leaderboardModel.buscarLeaderboardGrupo', () => {
   beforeEach(() => jest.clearAllMocks());
 

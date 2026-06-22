@@ -6,8 +6,20 @@ const leaderboardModel = require('../models/leaderboard');
 router.get('/global', async (req, res) => {
   try {
 
-    const ranking =
-      await leaderboardModel.buscarLeaderboardGlobal();
+    const limite = parseInt(req.query.limite) || 20;
+    const deslocamento = parseInt(req.query.deslocamento) || 0;
+
+    if (limite < 1 || deslocamento < 0) {
+      return res.status(400).json({ erro: 'Parametros de paginacao invalidos' });
+    }
+
+    const ranking = await leaderboardModel.buscarLeaderboardGlobal({
+      limite,
+      deslocamento,
+      idLiga: req.query.id_liga || null,
+      dataInicio: req.query.data_inicio || null,
+      dataFim: req.query.data_fim || null
+    });
 
     res.json(ranking);
 
