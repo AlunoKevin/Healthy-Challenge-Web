@@ -1,0 +1,148 @@
+/* Cabeçalho Fixo e Moderno (Efeito Vidro) */
+.main-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  border-bottom: 1px solid rgba(237, 242, 247, 0.8);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.8rem 2rem;
+}
+
+.logo-link {
+  text-decoration: none;
+}
+
+.logo {
+  color: #27ae60;
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Navegação Centralizada*/
+.header-nav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #7f8c8d;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: #27ae60;
+}
+
+/* Novo destaque para a página ativa (um sublinhado moderno) */
+.nav-link.active {
+  color: #1e8449;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #27ae60;
+  border-radius: 3px;
+}
+
+/* Menu de Perfil */
+.profile-menu {
+  position: relative;
+}
+
+.profile-pic {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #edf2f7;
+  transition: all 0.3s ease;
+}
+
+.profile-pic:hover {
+  border-color: #2ecc71;
+  transform: scale(1.05);
+}
+
+.dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  overflow: hidden;
+  z-index: 100;
+  animation: slideDown 0.2s ease-out forwards;
+}
+
+.dropdown-item {
+  padding: 1rem 1.2rem;
+  text-decoration: none;
+  color: #34495e;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown-item:hover {
+  background-color: #f8fafc;
+  color: #27ae60;
+}
+
+.dropdown-item.logout {
+  border-top: 1px solid #edf2f7;
+  color: #e74c3c;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fdf2f0;
+  color: #c0392b;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade Mobile */
+@media (max-width: 768px) {
+  .header-content { padding: 0.8rem 1rem; }
+  .logo { font-size: 1.2rem; }
+  /* No mobile, move a nav pro meio ou rodape, ou ajusta o padding */
+  .header-nav { gap: 0.2rem; }
+  .nav-link { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+}

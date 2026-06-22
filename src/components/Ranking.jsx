@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Ranking.css';
 
 const Ranking = () => {
-  // Aba ativa inicia em 'amigos'
   const [abaAtiva, setAbaAtiva] = useState('amigos'); 
   const [usuarios, setUsuarios] = useState([]);
   
-  // Controle de estado para abrir e fechar o menu do perfil
-  const [dropdownAberto, setDropdownAberto] = useState(false);
+  // Estado para controlar qual card de usuário está aberto
+  const [usuarioExpandido, setUsuarioExpandido] = useState(null);
 
-  // Dados simulados para a interface
   const mockRankingGlobal = [
     { id: 1, nome: 'Ana Silva', pontos: 2450, badge: '🔥 Streak 30 dias' },
     { id: 2, nome: 'Carlos Edu', pontos: 2100, badge: '🚴 15 min diários' },
@@ -23,45 +22,18 @@ const Ranking = () => {
   ];
 
   useEffect(() => {
-    if (abaAtiva === 'global') {
-      setUsuarios(mockRankingGlobal);
-    } else {
-      setUsuarios(mockRankingAmigos);
-    }
+    setUsuarios(abaAtiva === 'global' ? mockRankingGlobal : mockRankingAmigos);
+    setUsuarioExpandido(null); // Fecha o card aberto ao trocar de aba
   }, [abaAtiva]);
+
+  const handleCardClick = (userId) => {
+    // Se for o próprio usuário, não expande a opção de "ver perfil"
+    if (userId === 3) return; 
+    setUsuarioExpandido(usuarioExpandido === userId ? null : userId);
+  };
 
   return (
     <div className="ranking-page-wrapper">
-      
-      {/* Cabeçalho embutido na página */}
-      <header className="ranking-header">
-        <div className="header-left">
-          <h1 className="logo">Healthy Challenge Web</h1>
-          <nav className="nav-links">
-            <a href="#dashboard" className="nav-link">Dashboard</a>
-            <a href="#atividades" className="nav-link">Atividades</a>
-          </nav>
-        </div>
-
-        <div className="header-right">
-          <div className="profile-menu">
-            <img 
-              src="https://ui-avatars.com/api/?name=Admin+User&background=4CAF50&color=fff" 
-              alt="Foto de Perfil" 
-              className="profile-pic"
-              onClick={() => setDropdownAberto(!dropdownAberto)}
-            />
-            {dropdownAberto && (
-              <div className="dropdown">
-                <a href="#conta" className="dropdown-item">Minha Conta</a>
-                <a href="#sair" className="dropdown-item logout">Sair</a>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Conteúdo principal do Ranking */}
       <div className="ranking-container">
         <h2>🏆 Ranking</h2>
         
@@ -82,18 +54,32 @@ const Ranking = () => {
 
         <div className="ranking-list">
           {usuarios.map((user, index) => (
-            <div key={user.id} className={`ranking-card ${user.nome === 'Você' ? 'highlight' : ''}`}>
-              <div className="ranking-position">#{index + 1}</div>
-              <div className="ranking-info">
-                <span className="ranking-name">{user.nome}</span>
-                <span className="ranking-badge">{user.badge}</span>
+            <div 
+              key={user.id} 
+              className={`ranking-card ${user.nome === 'Você' ? 'highlight' : ''} ${usuarioExpandido === user.id ? 'expanded' : ''}`}
+              onClick={() => handleCardClick(user.id)}
+            >
+              <div className="card-main-content">
+                <div className="ranking-position">#{index + 1}</div>
+                <div className="ranking-info">
+                  <span className="ranking-name">{user.nome}</span>
+                  <span className="ranking-badge">{user.badge}</span>
+                </div>
+                <div className="ranking-points">{user.pontos} pts</div>
               </div>
-              <div className="ranking-points">{user.pontos} pts</div>
+              
+              {/* Opção de ver perfil renderizada condicionalmente */}
+              {usuarioExpandido === user.id && (
+                <div className="card-expanded-action">
+                   <Link to={`/perfil/${user.id}`} className="btn-ver-perfil">
+                     👁️ Ver Perfil de {user.nome.split(' ')[0]}
+                   </Link>
+                </div>
+              )}
             </div>
           ))}
         </div>
       </div>
-
     </div>
   );
 };
