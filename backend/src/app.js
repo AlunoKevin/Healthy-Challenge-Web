@@ -5,6 +5,7 @@ const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const desafioRoutes = require('./routes/desafioRoutes');
 const ligaRoutes = require('./routes/ligaRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const grupoRoutes = require('./routes/grupoRoutes');
 
 const app = express();
 
@@ -24,5 +25,6 @@ app.use('/leaderboard', leaderboardRoutes);
 app.use('/desafios', desafioRoutes);
 app.use('/ligas', ligaRoutes);
 app.use('/admin', adminRoutes);
+app.use('/grupos', grupoRoutes);
 
 module.exports = app;

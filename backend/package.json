@@ -17,7 +17,11 @@
       "src/routes/desafioRoutes.js",
       "src/models/ligaModel.js",
       "src/services/ligaService.js",
-      "src/models/leaderboard.js"
+      "src/models/leaderboard.js",
+      "src/models/grupoModel.js",
+      "src/services/grupoService.js",
+      "src/controllers/grupoController.js",
+      "src/routes/grupoRoutes.js"
     ],
     "coverageThreshold": {
       "global": {
