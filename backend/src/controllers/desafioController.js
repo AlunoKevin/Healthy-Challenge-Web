@@ -5,6 +5,11 @@ function idValido(valor) {
   return Number.isInteger(Number(valor)) && Number(valor) > 0;
 }
 
+// verifica se o valor e um numero positivo valido
+function pontuacaoValida(valor) {
+  return Number.isFinite(Number(valor)) && Number(valor) > 0;
+}
+
 // retorna todos os desafios ativos
 async function listar(req, res) {
   try {
@@ -74,7 +79,7 @@ async function meusConcluidos(req, res) {
 // cria um novo desafio com validacao dos campos obrigatorios
 async function criar(req, res) {
   const { titulo, descricao, pontuacao_prevista } = req.body;
-  if (!titulo || !pontuacao_prevista || Number(pontuacao_prevista) <= 0) {
+  if (!titulo || !pontuacaoValida(pontuacao_prevista)) {
     return res.status(400).json({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
   }
   try {
@@ -93,7 +98,7 @@ async function atualizar(req, res) {
     return res.status(400).json({ erro: 'id invalido' });
   }
   const { titulo, descricao, pontuacao_prevista } = req.body;
-  if (!titulo || !pontuacao_prevista || Number(pontuacao_prevista) <= 0) {
+  if (!titulo || !pontuacaoValida(pontuacao_prevista)) {
     return res.status(400).json({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
   }
   try {

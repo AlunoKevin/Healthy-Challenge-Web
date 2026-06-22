@@ -282,6 +282,17 @@ describe('desafioController.criar', () => {
     expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
   });
 
+  test('retorna 400 quando pontuacao_prevista nao e numerica', async () => {
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 'abc' } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+    expect(desafioService.criar).not.toHaveBeenCalled();
+  });
+
   test('retorna 500 quando service lanca erro sem status', async () => {
     desafioService.criar.mockRejectedValue(new Error('falha'));
     const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 100 } };
@@ -336,6 +347,17 @@ describe('desafioController.atualizar', () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  });
+
+  test('retorna 400 quando pontuacao_prevista nao e numerica', async () => {
+    const req = { params: { id: '1' }, body: { titulo: 'Novo', pontuacao_prevista: 'abc' } };
+    const res = mockRes();
+
+    await desafioController.atualizar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+    expect(desafioService.atualizar).not.toHaveBeenCalled();
   });
 
   test('retorna 404 quando desafio nao existe', async () => {
