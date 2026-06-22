@@ -117,15 +117,32 @@ npm test --prefix backend
 | GET | `/health` | Verifica se a API está no ar |
 | POST | `/auth/cadastro` | Cadastra um usuário (`nome`, `email`, `senha`, `nivel_dificuldade` opcional) |
 | POST | `/auth/login` | Faz login e retorna um token JWT |
-| GET | `/auth/perfil` | Dados do usuário logado (requer header `Authorization: Bearer <token>`) |
+| GET | `/auth/perfil` | Dados do usuário logado (requer `Authorization: Bearer <token>`) |
 | GET | `/leaderboard/global` | Ranking global |
 | GET | `/leaderboard/grupo/:idGrupo` | Ranking de um grupo |
+| GET | `/desafios` | Lista todos os desafios ativos |
+| GET | `/desafios/meus` | Desafios em que o usuário está inscrito (requer token) |
+| GET | `/desafios/concluidos` | Desafios concluídos pelo usuário (requer token) |
+| POST | `/desafios/:id/inscrever` | Inscreve o usuário em um desafio (requer token) |
+| POST | `/desafios/:id/concluir` | Conclui um desafio (requer token) |
+| POST | `/desafios` | Cria desafio — somente admin |
+| PUT | `/desafios/:id` | Atualiza desafio — somente admin |
+| DELETE | `/desafios/:id` | Inativa desafio — somente admin |
+| GET | `/ligas` | Lista todas as ligas |
+| GET | `/ligas/minha` | Liga atual do usuário logado (requer token) |
+| POST | `/admin/login` | Login de administrador |
+| GET | `/admin/status` | Verifica autenticação de admin (requer token admin) |
+| POST | `/grupos` | Cria um grupo (requer token) |
+| POST | `/grupos/:id/membros` | Adiciona membro ao grupo (requer token) |
+| DELETE | `/grupos/:id/membros/:userId` | Remove membro do grupo (requer token) |
+| GET | `/usuario/ranking-info` | Dados de ranking do usuário logado (requer token) |
 
 Exemplos de teste via curl:
 
 ```bash
 curl http://localhost:3001/leaderboard/global
-curl http://localhost:3001/leaderboard/grupo/1   # trocar 1 pelo ID do grupo
+curl http://localhost:3001/desafios
+curl http://localhost:3001/ligas
 ```
 
 ## Rodar frontend e backend separadamente (opcional)
