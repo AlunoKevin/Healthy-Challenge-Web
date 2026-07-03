@@ -7,6 +7,7 @@ const ligaRoutes = require('./routes/ligaRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const grupoRoutes = require('./routes/grupoRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const perfilRoutes = require('./routes/perfilRoutes');
 
 const app = express();
 
@@ -28,5 +29,6 @@ app.use('/ligas', ligaRoutes);
 app.use('/admin', adminRoutes);
 app.use('/grupos', grupoRoutes);
 app.use('/usuario', usuarioRoutes);
+app.use('/perfil', perfilRoutes);
 
 module.exports = app;

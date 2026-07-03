@@ -35,4 +35,24 @@ async function removerMembro(idGrupo, idUsuario) {
   return resultado.rowCount;
 }
 
-module.exports = { criar, buscarPorId, adicionarMembro, removerMembro };
+async function buscarDoUsuario(idUsuario){
+
+    const sql = `
+        SELECT
+            g.id_grupo,
+            g.nome,
+            g.descricao
+        FROM Grupo g
+
+        INNER JOIN Usuario_Grupo ug
+            ON ug.id_grupo = g.id_grupo
+
+        WHERE ug.id_usuario = $1
+    `;
+
+    const resultado = await pool.query(sql,[idUsuario]);
+
+    return resultado.rows;
+}
+
+module.exports = { criar, buscarPorId, adicionarMembro, removerMembro, buscarDoUsuario };
