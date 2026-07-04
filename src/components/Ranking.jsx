@@ -1,79 +1,172 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Ranking.css';
 
-const Ranking = () => {
-  // Aba ativa inicia em 'amigos'
-  const [abaAtiva, setAbaAtiva] = useState('amigos'); 
+const API_URL = 'http://localhost:3001';
+
+const Ranking = ({ onIrParaAtividades }) => {
+  const [abaAtiva, setAbaAtiva] = useState('global');
   const [usuarios, setUsuarios] = useState([]);
-  
-  // Controle de estado para abrir e fechar o menu do perfil
+  const [carregando, setCarregando] = useState(true);
   const [dropdownAberto, setDropdownAberto] = useState(false);
 
-  // Dados simulados para a interface
-  const mockRankingGlobal = [
-    { id: 1, nome: 'Ana Silva', pontos: 2450, badge: '🔥 Streak 30 dias' },
-    { id: 2, nome: 'Carlos Edu', pontos: 2100, badge: '🚴 15 min diários' },
-    { id: 3, nome: 'Você', pontos: 1850, badge: '🏃 Iniciante' },
-    { id: 4, nome: 'Bia Costa', pontos: 1720, badge: '💧 Hidratada' },
-  ];
+  let usuarioLogado = {};
 
-  const mockRankingAmigos = [
-    { id: 2, nome: 'Carlos Edu', pontos: 2100, badge: '🚴 15 min diários' },
-    { id: 3, nome: 'Você', pontos: 1850, badge: '🏃 Iniciante' },
-  ];
+  try {
+    const cache = localStorage.getItem('usuario');
+    if (cache && cache !== 'undefined') {
+      usuarioLogado = JSON.parse(cache);
+    }
+  } catch (e) {
+    console.error('Erro ao ler utilizador:', e);
+  }
 
   useEffect(() => {
-    if (abaAtiva === 'global') {
-      setUsuarios(mockRankingGlobal);
-    } else {
-      setUsuarios(mockRankingAmigos);
-    }
+    const buscarRanking = async () => {
+      try {
+        setCarregando(true);
+
+        const token = localStorage.getItem('token');
+
+        const endpoint =
+          abaAtiva === 'global'
+            ? `${API_URL}/leaderboard/global`
+            : `${API_URL}/leaderboard/grupo/1`;
+
+        const resposta = await fetch(endpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (resposta.ok) {
+          const dados = await resposta.json();
+
+          const meuId = String(
+            usuarioLogado.id || usuarioLogado.id_usuario || ''
+          );
+
+          const rankingFormatado = dados.map((user) => {
+            const idUsuario = String(user.id_usuario || user.id || '');
+
+            return {
+              id: idUsuario || Math.random(),
+              nome: user.nome || 'Utilizador',
+              pontos:
+                user.pontuacao_total ??
+                user.pontos ??
+                user.pontuacao ??
+                user.score ??
+                0,
+              badge: user.nivel_dificuldade || 'Atleta',
+              eUsuarioLogado:
+                meuId !== '' &&
+                idUsuario !== '' &&
+                meuId === idUsuario,
+            };
+          });
+
+          setUsuarios(rankingFormatado);
+        } else {
+          setUsuarios([]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar ranking:', error);
+        setUsuarios([]);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    buscarRanking();
   }, [abaAtiva]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    window.location.reload();
+  };
 
   return (
     <div className="ranking-page-wrapper">
-      
-      {/* Cabeçalho embutido na página */}
       <header className="ranking-header">
         <div className="header-left">
           <h1 className="logo">Healthy Challenge Web</h1>
+
           <nav className="nav-links">
-            <a href="#dashboard" className="nav-link">Dashboard</a>
-            <a href="#atividades" className="nav-link">Atividades</a>
+            <button
+              className="nav-link active"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Dashboard
+            </button>
+
+            <button
+              className="nav-link"
+              onClick={onIrParaAtividades}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Atividades
+            </button>
           </nav>
         </div>
 
         <div className="header-right">
           <div className="profile-menu">
-            <img 
-              src="https://ui-avatars.com/api/?name=Admin+User&background=4CAF50&color=fff" 
-              alt="Foto de Perfil" 
+            <img
+              src={`https://ui-avatars.com/api/?name=${
+                usuarioLogado.nome || 'User'
+              }&background=4CAF50&color=fff`}
+              alt="Foto de Perfil"
               className="profile-pic"
               onClick={() => setDropdownAberto(!dropdownAberto)}
             />
+
             {dropdownAberto && (
               <div className="dropdown">
-                <a href="#conta" className="dropdown-item">Minha Conta</a>
-                <a href="#sair" className="dropdown-item logout">Sair</a>
+                <a href="#conta" className="dropdown-item">
+                  Minha Conta
+                </a>
+
+                <button
+                  onClick={handleLogout}
+                  className="dropdown-item logout"
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    border: 'none',
+                    background: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Sair
+                </button>
               </div>
             )}
           </div>
         </div>
       </header>
 
-      {/* Conteúdo principal do Ranking */}
       <div className="ranking-container">
         <h2>🏆 Ranking</h2>
-        
+
         <div className="ranking-tabs">
-          <button 
-            className={abaAtiva === 'amigos' ? 'tab active' : 'tab'} 
+          <button
+            className={abaAtiva === 'amigos' ? 'tab active' : 'tab'}
             onClick={() => setAbaAtiva('amigos')}
           >
             Meus Amigos
           </button>
-          <button 
-            className={abaAtiva === 'global' ? 'tab active' : 'tab'} 
+
+          <button
+            className={abaAtiva === 'global' ? 'tab active' : 'tab'}
             onClick={() => setAbaAtiva('global')}
           >
             Global
@@ -81,19 +174,44 @@ const Ranking = () => {
         </div>
 
         <div className="ranking-list">
-          {usuarios.map((user, index) => (
-            <div key={user.id} className={`ranking-card ${user.nome === 'Você' ? 'highlight' : ''}`}>
-              <div className="ranking-position">#{index + 1}</div>
-              <div className="ranking-info">
-                <span className="ranking-name">{user.nome}</span>
-                <span className="ranking-badge">{user.badge}</span>
+          {carregando ? (
+            <p style={{ textAlign: 'center', marginTop: '20px' }}>
+              A carregar classificação...
+            </p>
+          ) : usuarios.length > 0 ? (
+            usuarios.map((user, index) => (
+              <div
+                key={user.id}
+                className={`ranking-card ${
+                  user.eUsuarioLogado ? 'highlight' : ''
+                }`}
+              >
+                <div className="ranking-position">
+                  #{index + 1}
+                </div>
+
+                <div className="ranking-info">
+                  <span className="ranking-name">
+                    {user.eUsuarioLogado ? 'Você' : user.nome}
+                  </span>
+
+                  <span className="ranking-badge">
+                    {user.badge}
+                  </span>
+                </div>
+
+                <div className="ranking-points">
+                  {user.pontos} pts
+                </div>
               </div>
-              <div className="ranking-points">{user.pontos} pts</div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p style={{ textAlign: 'center', marginTop: '20px' }}>
+              Nenhum utilizador encontrado.
+            </p>
+          )}
         </div>
       </div>
-
     </div>
   );
 };
