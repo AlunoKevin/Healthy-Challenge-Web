@@ -1,0 +1,204 @@
+.profile-page {
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+  min-height: 100%;
+  font-family: 'Nunito', sans-serif;
+  color: #1f2937;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(31, 111, 76, 0.08);
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ============ VOLTAR ============ */
+.voltar-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: #1f6f4c;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.voltar-btn:hover {
+  text-decoration: underline;
+}
+
+/* ============ FOTO ============ */
+.profile-photo-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.profile-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #2fa86b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  overflow: hidden;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-photo-btn {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  background: #1f6f4c;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.edit-photo-btn:hover {
+  background: #2fa86b;
+}
+
+/* ============ NOME ============ */
+.profile-name {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+/* ============ BIO ============ */
+.profile-bio-wrap {
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.profile-bio {
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.profile-bio-input {
+  width: 100%;
+  min-height: 70px;
+  border: 1px solid #e6ece9;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  resize: vertical;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.edit-bio-btn {
+  background: none;
+  border: none;
+  color: #1f6f4c;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.edit-bio-btn:hover {
+  text-decoration: underline;
+}
+
+.bio-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.btn-primary {
+  background: #2fa86b;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #1f6f4c;
+}
+
+.btn-secondary {
+  background: #e6ece9;
+  color: #1f2937;
+}
+
+.btn-secondary:hover {
+  background: #d7ded9;
+}
+
+/* ============ RANKINGS ============ */
+.ranking-summary {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rank-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #e3f8ec;
+  border-radius: 14px;
+  padding: 14px 20px;
+}
+
+.rank-pill__label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.rank-pill__value {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #1f9a5c;
+}
+
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 32px 24px;
+  }
+}
