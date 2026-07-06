@@ -49,7 +49,48 @@ const Atividades = ({ onIrParaDashboard }) => {
         }
 
         const dados = await resposta.json();
-        setItens(Array.isArray(dados) ? dados : []);
+        let lista = Array.isArray(dados) ? dados : [];
+
+        const buscarIds = async (endpoint) => {
+          const respostaIds = await fetch(`${API_URL}${endpoint}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (!respostaIds.ok) {
+            return new Set();
+          }
+
+          const dadosIds = await respostaIds.json();
+
+          return new Set(
+            dadosIds.map((desafio) => desafio.id_desafio || desafio.id)
+          );
+        };
+
+        if (abaAtiva === 'disponiveis') {
+          const idsMeusDesafios = await buscarIds('/desafios/meus');
+          const idsConcluidos = await buscarIds('/desafios/concluidos');
+
+          lista = lista.filter((desafio) => {
+            const idDesafio = desafio.id_desafio || desafio.id;
+
+            return !idsMeusDesafios.has(idDesafio) && !idsConcluidos.has(idDesafio);
+          });
+        }
+
+        if (abaAtiva === 'meus') {
+          const idsConcluidos = await buscarIds('/desafios/concluidos');
+
+          lista = lista.filter((desafio) => {
+            const idDesafio = desafio.id_desafio || desafio.id;
+
+            return !idsConcluidos.has(idDesafio);
+          });
+        }
+
+        setItens(lista);
       } catch (error) {
         setItens([]);
         setErro(error.message || 'Erro de conexão.');
