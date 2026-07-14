@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import Header from "./Header";
 import "../styles/Ranking.css";
 import "../styles/Perfil.css";
 
@@ -12,7 +13,7 @@ function obterIniciais(nome) {
     .join("");
 }
 
-export default function Perfil({ usuarioRanking, onVoltar, onIrParaAtividades }) {
+export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRanking, onIrParaAtividades, onVerPerfil }) {
   let usuarioLogado = {};
   try {
     const cache = localStorage.getItem("usuario");
@@ -86,33 +87,17 @@ export default function Perfil({ usuarioRanking, onVoltar, onIrParaAtividades })
 
   return (
     <div className="ranking-page-wrapper">
-      <header className="ranking-header">
-        <div className="header-left">
-          <h1 className="logo">Healthy Challenge Web</h1>
-
-          <nav className="nav-links">
-            <button
-              className="nav-link"
-              onClick={onVoltar}
-              style={{ background: "none", border: "none", cursor: "pointer" }}
-            >
-              Dashboard
-            </button>
-
-            <button
-              className="nav-link"
-              onClick={onIrParaAtividades}
-              style={{ background: "none", border: "none", cursor: "pointer" }}
-            >
-              Atividades
-            </button>
-          </nav>
-        </div>
-      </header>
+      <Header
+        telaAtiva="perfil"
+        onIrParaDashboard={onIrParaDashboard}
+        onIrParaRanking={onIrParaRanking}
+        onIrParaAtividades={onIrParaAtividades}
+        onVerPerfil={() => onVerPerfil(null)}
+      />
 
       <main className="profile-page">
         <section className="profile-card">
-          <button type="button" className="voltar-btn" onClick={onVoltar}>
+          <button type="button" className="voltar-btn" onClick={onIrParaRanking}>
             ← Voltar ao ranking
           </button>
 

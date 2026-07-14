@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import Header from './Header';
 import '../styles/Ranking.css';
 
 const API_URL = 'http://localhost:3001';
 
-const Atividades = ({ onIrParaDashboard }) => {
+const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
   const [abaAtiva, setAbaAtiva] = useState('desafios');
   const [itens, setItens] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -73,15 +74,13 @@ const Atividades = ({ onIrParaDashboard }) => {
 
   return (
     <div className="ranking-page-wrapper">
-      <header className="ranking-header">
-        <div className="header-left">
-          <h1 className="logo">Healthy Challenge Web</h1>
-          <nav className="nav-links">
-             <button className="nav-link" onClick={onIrParaDashboard} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Dashboard</button>
-             <button className="nav-link active" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Atividades</button>
-          </nav>
-        </div>
-      </header>
+      <Header
+        telaAtiva="atividades"
+        onIrParaDashboard={onIrParaDashboard}
+        onIrParaRanking={onIrParaRanking}
+        onIrParaAtividades={() => {}}
+        onVerPerfil={() => onVerPerfil(null)}
+      />
 
       <div className="ranking-container">
         <h2>🎯 Central de Atividades</h2>
