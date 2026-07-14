@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import Login from './components/Login';
 import Cadastro from './components/Cadastro';
-import Dashboard from './components/Dashboard'; // Presumo que você renomeou Ranking para Dashboard
-import Atividades from './components/Atividades'; // <-- IMPORTAQUI AQUI
+import Dashboard from './components/Dashboard';
+import Atividades from './components/Atividades';
+import Perfil from './components/Perfil';
 
 function App() {
   const [telaAtual, setTelaAtual] = useState(localStorage.getItem('token') ? 'dashboard' : 'login');
+
+  const [perfilUsuario, setPerfilUsuario] = useState(null);
+
+  function abrirPerfil(usuarioRanking) {
+    setPerfilUsuario(usuarioRanking || null);
+    setTelaAtual('perfil');
+  }
 
   return (
     <div style={{ margin: 0, padding: 0, fontFamily: 'sans-serif' }}>
@@ -26,7 +34,8 @@ function App() {
 
       {telaAtual === 'dashboard' && (
         <Dashboard 
-          onIrParaAtividades={() => setTelaAtual('atividades')} // Cria esse botão na Navbar do seu Dashboard!
+          onIrParaAtividades={() => setTelaAtual('atividades')}
+          onVerPerfil={abrirPerfil} // <-- NOVO: passa a função pro Dashboard
           onLogout={() => {
             localStorage.removeItem('token');
             setTelaAtual('login');
@@ -34,10 +43,18 @@ function App() {
         />
       )}
 
-      {/* NOVA TELA ADICIONADA */}
       {telaAtual === 'atividades' && (
         <Atividades 
           onIrParaDashboard={() => setTelaAtual('dashboard')} 
+        />
+      )}
+
+      {/* NOVA TELA: PERFIL */}
+      {telaAtual === 'perfil' && (
+        <Perfil
+          usuarioRanking={perfilUsuario}
+          onVoltar={() => setTelaAtual('dashboard')}
+          onIrParaAtividades={() => setTelaAtual('atividades')}
         />
       )}
       

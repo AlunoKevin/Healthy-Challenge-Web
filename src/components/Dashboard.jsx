@@ -3,7 +3,8 @@ import '../styles/Ranking.css';
 
 const API_URL = 'http://localhost:3001';
 
-const Dashboard = ({ onIrParaAtividades }) => {
+// NOVO: recebe onVerPerfil vindo do App.jsx
+const Dashboard = ({ onIrParaAtividades, onVerPerfil }) => {
   const [abaAtiva, setAbaAtiva] = useState('global');
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -79,6 +80,23 @@ const Dashboard = ({ onIrParaAtividades }) => {
             />
             {dropdownAberto && (
               <div className="dropdown">
+                {/* "Ver perfil" abre o meu próprio perfil, com os dados do ranking atual se disponíveis */}
+                <button
+                  onClick={() => {
+                    setDropdownAberto(false);
+                    const indice = usuarios.findIndex((u) => u.eUsuarioLogado);
+                    const meuRegistro = indice >= 0 ? usuarios[indice] : null;
+                    onVerPerfil(
+                      meuRegistro
+                        ? { ...meuRegistro, posicao: indice + 1, aba: abaAtiva }
+                        : null
+                    );
+                  }}
+                  className="dropdown-item"
+                  style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer' }}
+                >
+                  Ver perfil
+                </button>
                 <button onClick={handleLogout} className="dropdown-item logout" style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer' }}>Sair</button>
               </div>
             )}
@@ -91,7 +109,13 @@ const Dashboard = ({ onIrParaAtividades }) => {
         <div className="ranking-list">
           {carregando ? <p style={{ textAlign: 'center', marginTop: '20px' }}>Carregando...</p> : 
            usuarios.map((user, index) => (
-              <div key={user.id} className={`ranking-card ${user.eUsuarioLogado ? 'highlight' : ''}`}>
+              <div
+                key={user.id}
+                className={`ranking-card ${user.eUsuarioLogado ? 'highlight' : ''}`}
+                // Clicar num usuário abre o perfil dele (ou o seu, se for você mesmo)
+                onClick={() => onVerPerfil({ ...user, posicao: index + 1, aba: abaAtiva })}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="ranking-position">#{index + 1}</div>
                 <div className="ranking-info">
                   <span className="ranking-name">{user.eUsuarioLogado ? 'Você' : user.nome}</span>
