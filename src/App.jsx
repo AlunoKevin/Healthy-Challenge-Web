@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Login from './components/Login';
 import Cadastro from './components/Cadastro';
 import Dashboard from './components/Dashboard';
+import Ranking from './components/Ranking';
 import Atividades from './components/Atividades';
 import Perfil from './components/Perfil';
 
@@ -33,28 +34,37 @@ function App() {
       )}
 
       {telaAtual === 'dashboard' && (
-        <Dashboard 
+        <Dashboard
+          onIrParaRanking={() => setTelaAtual('ranking')}
           onIrParaAtividades={() => setTelaAtual('atividades')}
-          onVerPerfil={abrirPerfil} // <-- NOVO: passa a função pro Dashboard
-          onLogout={() => {
-            localStorage.removeItem('token');
-            setTelaAtual('login');
-          }}
+          onVerPerfil={abrirPerfil}
+        />
+      )}
+
+      {telaAtual === 'ranking' && (
+        <Ranking
+          onIrParaDashboard={() => setTelaAtual('dashboard')}
+          onIrParaAtividades={() => setTelaAtual('atividades')}
+          onVerPerfil={abrirPerfil}
         />
       )}
 
       {telaAtual === 'atividades' && (
-        <Atividades 
-          onIrParaDashboard={() => setTelaAtual('dashboard')} 
+        <Atividades
+          onIrParaDashboard={() => setTelaAtual('dashboard')}
+          onIrParaRanking={() => setTelaAtual('ranking')}
+          onVerPerfil={abrirPerfil}
         />
       )}
 
-      {/* NOVA TELA: PERFIL */}
+      {/* TELA: PERFIL */}
       {telaAtual === 'perfil' && (
         <Perfil
           usuarioRanking={perfilUsuario}
-          onVoltar={() => setTelaAtual('dashboard')}
+          onIrParaDashboard={() => setTelaAtual('dashboard')}
+          onIrParaRanking={() => setTelaAtual('ranking')}
           onIrParaAtividades={() => setTelaAtual('atividades')}
+          onVerPerfil={abrirPerfil}
         />
       )}
       
