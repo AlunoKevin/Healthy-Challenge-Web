@@ -8,10 +8,10 @@ import Perfil from './components/Perfil';
 function App() {
   const [telaAtual, setTelaAtual] = useState(localStorage.getItem('token') ? 'dashboard' : 'login');
 
-  const [perfilUserId, setPerfilUserId] = useState(null);
+  const [perfilUsuario, setPerfilUsuario] = useState(null);
 
-  function abrirPerfil(userId) {
-    setPerfilUserId(userId || null);
+  function abrirPerfil(usuarioRanking) {
+    setPerfilUsuario(usuarioRanking || null);
     setTelaAtual('perfil');
   }
 
@@ -52,8 +52,9 @@ function App() {
       {/* NOVA TELA: PERFIL */}
       {telaAtual === 'perfil' && (
         <Perfil
-          userId={perfilUserId}
+          usuarioRanking={perfilUsuario}
           onVoltar={() => setTelaAtual('dashboard')}
+          onIrParaAtividades={() => setTelaAtual('atividades')}
         />
       )}
       

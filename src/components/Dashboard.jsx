@@ -80,11 +80,17 @@ const Dashboard = ({ onIrParaAtividades, onVerPerfil }) => {
             />
             {dropdownAberto && (
               <div className="dropdown">
-                {/* NOVO: "Ver perfil" chama onVerPerfil() sem argumento = meu próprio perfil */}
+                {/* "Ver perfil" abre o meu próprio perfil, com os dados do ranking atual se disponíveis */}
                 <button
                   onClick={() => {
                     setDropdownAberto(false);
-                    onVerPerfil();
+                    const indice = usuarios.findIndex((u) => u.eUsuarioLogado);
+                    const meuRegistro = indice >= 0 ? usuarios[indice] : null;
+                    onVerPerfil(
+                      meuRegistro
+                        ? { ...meuRegistro, posicao: indice + 1, aba: abaAtiva }
+                        : null
+                    );
                   }}
                   className="dropdown-item"
                   style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer' }}
@@ -106,8 +112,8 @@ const Dashboard = ({ onIrParaAtividades, onVerPerfil }) => {
               <div
                 key={user.id}
                 className={`ranking-card ${user.eUsuarioLogado ? 'highlight' : ''}`}
-                // NOVO: clicar num usuário abre o perfil dele (ou o seu, se for você mesmo)
-                onClick={() => onVerPerfil(user.eUsuarioLogado ? null : user.id)}
+                // Clicar num usuário abre o perfil dele (ou o seu, se for você mesmo)
+                onClick={() => onVerPerfil({ ...user, posicao: index + 1, aba: abaAtiva })}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="ranking-position">#{index + 1}</div>
