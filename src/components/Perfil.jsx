@@ -55,9 +55,9 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
   const badge = usuarioRanking?.badge || liga || "—";
 
   // Se a pessoa navegar de um perfil para outro, reseta o estado local
-  // e busca os dados reais do proprio perfil no backend.
+  // e busca os dados reais do perfil visitado no backend (proprio ou de terceiros).
   useEffect(() => {
-    setPhotoUrl(null);
+    setPhotoUrl(usuarioRanking?.foto_url || null);
     setPhotoDraft(null);
     setBio("");
     setBioDraft("");
@@ -68,8 +68,6 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
     setMostrarAmigos(false);
     setLiga(null);
 
-    if (!isOwnProfile) return;
-
     buscarPerfil();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perfilId]);
@@ -77,7 +75,8 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
   async function buscarPerfil() {
     try {
       const token = localStorage.getItem("token");
-      const resposta = await fetch(`${API_URL}/perfil`, {
+      const endpoint = isOwnProfile ? "/perfil" : `/perfil/${perfilId}`;
+      const resposta = await fetch(`${API_URL}${endpoint}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!resposta.ok) return;
@@ -87,7 +86,9 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
       setPhotoUrl(dados.foto_url || null);
       setAmigos(dados.amigos || []);
       setLiga(dados.liga || null);
-      sincronizarFotoNoCache(dados.foto_url || null);
+      // so sincroniza o cache local (usado pelo Header) quando e o proprio perfil,
+      // para nao sobrescrever a propria foto com a de outro usuario
+      if (isOwnProfile) sincronizarFotoNoCache(dados.foto_url || null);
     } catch (e) {
       // mantem os campos vazios se a busca falhar
     }

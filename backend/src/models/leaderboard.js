@@ -15,7 +15,7 @@ async function buscarLeaderboardGlobal(opcoes = {}) {
       filtroLiga = `WHERE u.id_liga = $${params.length}`;
     }
     sql = `
-      SELECT u.id_usuario, u.nome, l.nome AS liga,
+      SELECT u.id_usuario, u.nome, u.foto_url, l.nome AS liga,
              COALESCE(SUM(cd.pontuacao),0) AS pontuacao_total,
              RANK() OVER (ORDER BY COALESCE(SUM(cd.pontuacao),0) DESC) AS posicao
       FROM Usuario u
@@ -24,14 +24,14 @@ async function buscarLeaderboardGlobal(opcoes = {}) {
         ON u.id_usuario = cd.id_usuario
        AND cd.data_conclusao BETWEEN $1 AND $2
       ${filtroLiga}
-      GROUP BY u.id_usuario, u.nome, l.nome
+      GROUP BY u.id_usuario, u.nome, u.foto_url, l.nome
       ORDER BY posicao
     `;
   } else if (idLiga) {
     // sem periodo: usa a view e junta com Usuario so para filtrar pela liga, mantendo a posicao global
     params.push(idLiga);
     sql = `
-      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, l.nome AS liga, mlg.pontuacao_total
+      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, u.foto_url, l.nome AS liga, mlg.pontuacao_total
       FROM mv_leaderboard_global mlg
       JOIN Usuario u ON u.id_usuario = mlg.id_usuario
       LEFT JOIN Liga l ON l.id_liga = u.id_liga
@@ -40,7 +40,7 @@ async function buscarLeaderboardGlobal(opcoes = {}) {
     `;
   } else {
     sql = `
-      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, l.nome AS liga, mlg.pontuacao_total
+      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, u.foto_url, l.nome AS liga, mlg.pontuacao_total
       FROM mv_leaderboard_global mlg
       JOIN Usuario u ON u.id_usuario = mlg.id_usuario
       LEFT JOIN Liga l ON l.id_liga = u.id_liga
@@ -69,6 +69,7 @@ async function buscarLeaderboardGrupo(idGrupo) {
       mlg.posicao_grupo,
       mlg.id_usuario,
       mlg.usuario,
+      u.foto_url,
       l.nome AS liga,
       mlg.pontuacao_total
     FROM mv_leaderboard_grupo mlg
@@ -103,6 +104,7 @@ async function buscarLeaderboardAmigos(idUsuario) {
     SELECT
       u.id_usuario,
       u.nome,
+      u.foto_url,
       l.nome AS liga,
       COALESCE(SUM(cd.pontuacao),0) AS pontuacao_total,
       RANK() OVER (
@@ -112,7 +114,7 @@ async function buscarLeaderboardAmigos(idUsuario) {
     JOIN Usuario u ON u.id_usuario = p.id_usuario
     LEFT JOIN Liga l ON l.id_liga = u.id_liga
     LEFT JOIN Conclusao_Desafio cd ON cd.id_usuario = u.id_usuario
-    GROUP BY u.id_usuario, u.nome, l.nome
+    GROUP BY u.id_usuario, u.nome, u.foto_url, l.nome
     ORDER BY posicao;
   `;
 
