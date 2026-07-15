@@ -3,10 +3,11 @@ import '../styles/Auth.css';
 
 const API_URL = 'http://localhost:3001';
 
-const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
+const AdminLogin = ({ onIrParaLogin, onSucesso }) => {
   const [credenciais, setCredenciais] = useState({
     email: '',
-    senha: ''
+    senha: '',
+    chave_de_acesso: ''
   });
 
   const [carregando, setCarregando] = useState(false);
@@ -28,30 +29,24 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
       setCarregando(true);
       setErro('');
 
-      const resposta = await fetch(`${API_URL}/auth/login`, {
+      const resposta = await fetch(`${API_URL}/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          email: credenciais.email,
-          senha: credenciais.senha
-        })
+        body: JSON.stringify(credenciais)
       });
 
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        throw new Error(dados.erro || 'E-mail ou senha inválidos.');
+        throw new Error(dados.erro || 'Credenciais de administrador inválidas.');
       }
 
-      localStorage.setItem('token', dados.token);
-      localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+      localStorage.setItem('adminToken', dados.token);
+      localStorage.setItem('adminEmail', credenciais.email);
 
-      alert('Login realizado com sucesso!');
       onSucesso();
-
-      // Futuramente, aqui será feito o redirecionamento para a página inicial.
     } catch (error) {
       setErro(error.message);
     } finally {
@@ -66,14 +61,14 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
         <div className="auth-banner">
           <div className="banner-content">
             <h1>Healthy<br />Challenge Web</h1>
-            <p>Transforme seus hábitos em conquistas diárias. Desafie-se!</p>
-            <div className="banner-icon">🏆</div>
+            <p>Área restrita para administradores.</p>
+            <div className="banner-icon">🛠️</div>
           </div>
         </div>
 
         <div className="auth-form-container">
-          <h2>Bem-vindo de volta! 👋</h2>
-          <p>Acesse sua conta e continue evoluindo.</p>
+          <h2>Acesso do administrador 🔐</h2>
+          <p>Entre com suas credenciais para gerenciar os desafios.</p>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
@@ -83,7 +78,7 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
                 name="email"
                 value={credenciais.email}
                 onChange={handleChange}
-                placeholder="seu@email.com"
+                placeholder="admin@exemplo.com"
                 required
               />
             </div>
@@ -100,6 +95,18 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
               />
             </div>
 
+            <div className="form-group">
+              <label>Chave de acesso</label>
+              <input
+                type="password"
+                name="chave_de_acesso"
+                value={credenciais.chave_de_acesso}
+                onChange={handleChange}
+                placeholder="Chave de acesso do administrador"
+                required
+              />
+            </div>
+
             {erro && <p className="auth-error">{erro}</p>}
 
             <button type="submit" className="btn-auth" disabled={carregando}>
@@ -108,20 +115,11 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
           </form>
 
           <p className="auth-switch">
-            Ainda não tem conta?{' '}
-            <button type="button" className="link-button" onClick={onIrParaCadastro}>
-              Cadastre-se
+            Não é administrador?{' '}
+            <button type="button" className="link-button" onClick={onIrParaLogin}>
+              Voltar para o login
             </button>
           </p>
-
-          {onIrParaAdminLogin && (
-            <p className="auth-switch">
-              É administrador?{' '}
-              <button type="button" className="link-button" onClick={onIrParaAdminLogin}>
-                Acesse aqui
-              </button>
-            </p>
-          )}
         </div>
 
       </div>
@@ -129,4 +127,4 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
   );
 };
 
-export default Login;
+export default AdminLogin;
