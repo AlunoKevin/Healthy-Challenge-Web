@@ -67,7 +67,7 @@ async function meusConcluidos(id_usuario) {
 }
 
 // cria um novo desafio apos validar campos obrigatorios
-async function criar(titulo, descricao, pontuacao_prevista) {
+async function criar(titulo, descricao, pontuacao_prevista, id_jogo, id_administrador) {
   if (!titulo) {
     const erro = new Error('titulo e obrigatorio');
     erro.status = 400;
@@ -78,7 +78,12 @@ async function criar(titulo, descricao, pontuacao_prevista) {
     erro.status = 400;
     throw erro;
   }
-  return desafioModel.criar(titulo, descricao, pontuacao_prevista);
+  if (id_jogo === null || id_jogo === undefined) {
+    const erro = new Error('id_jogo e obrigatorio');
+    erro.status = 400;
+    throw erro;
+  }
+  return desafioModel.criar(titulo, descricao, pontuacao_prevista, id_jogo, id_administrador);
 }
 
 // atualiza desafio apos verificar se existe

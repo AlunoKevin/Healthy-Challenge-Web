@@ -142,19 +142,24 @@ describe('desafioService.criar', () => {
   test('cria desafio quando dados validos', async () => {
     desafioModel.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, ativo: true });
 
-    const resultado = await desafioService.criar('Beber agua', null, 100);
+    const resultado = await desafioService.criar('Beber agua', null, 100, 1, 1);
 
-    expect(desafioModel.criar).toHaveBeenCalledWith('Beber agua', null, 100);
+    expect(desafioModel.criar).toHaveBeenCalledWith('Beber agua', null, 100, 1, 1);
     expect(resultado.titulo).toBe('Beber agua');
   });
 
   test('lanca 400 quando titulo esta ausente', async () => {
-    await expect(desafioService.criar('', null, 100))
+    await expect(desafioService.criar('', null, 100, 1, 1))
       .rejects.toHaveProperty('status', 400);
   });
 
   test('lanca 400 quando pontuacao_prevista esta ausente', async () => {
-    await expect(desafioService.criar('Beber agua', null, null))
+    await expect(desafioService.criar('Beber agua', null, null, 1, 1))
+      .rejects.toHaveProperty('status', 400);
+  });
+
+  test('lanca 400 quando id_jogo esta ausente', async () => {
+    await expect(desafioService.criar('Beber agua', null, 100, null, 1))
       .rejects.toHaveProperty('status', 400);
   });
 });
