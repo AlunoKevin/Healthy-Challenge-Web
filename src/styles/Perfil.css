@@ -220,6 +220,12 @@
   box-shadow: 0 6px 15px rgba(46, 204, 113, 0.1);
 }
 
+.rank-pill--clicavel {
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
 .rank-pill__label {
   font-weight: 600;
   font-size: 0.85rem;

@@ -64,7 +64,8 @@ async function buscarAmigos(idUsuario){
         SELECT
             u.id_usuario,
             u.nome,
-            u.email
+            u.email,
+            u.foto_url
 
         FROM Amizade a
 
