@@ -68,26 +68,27 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
 
     if (!isOwnProfile) return;
 
-    async function buscarPerfil() {
-      try {
-        const token = localStorage.getItem("token");
-        const resposta = await fetch(`${API_URL}/perfil`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!resposta.ok) return;
-        const dados = await resposta.json();
-        setBio(dados.bio || "");
-        setBioDraft(dados.bio || "");
-        setPhotoUrl(dados.foto_url || null);
-        setAmigos(dados.amigos || []);
-        sincronizarFotoNoCache(dados.foto_url || null);
-      } catch (e) {
-        // mantem os campos vazios se a busca falhar
-      }
-    }
     buscarPerfil();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perfilId]);
+
+  async function buscarPerfil() {
+    try {
+      const token = localStorage.getItem("token");
+      const resposta = await fetch(`${API_URL}/perfil`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!resposta.ok) return;
+      const dados = await resposta.json();
+      setBio(dados.bio || "");
+      setBioDraft(dados.bio || "");
+      setPhotoUrl(dados.foto_url || null);
+      setAmigos(dados.amigos || []);
+      sincronizarFotoNoCache(dados.foto_url || null);
+    } catch (e) {
+      // mantem os campos vazios se a busca falhar
+    }
+  }
 
   // mantem o cache local (usado pelo Header) sincronizado com a foto real
   function sincronizarFotoNoCache(fotoUrl) {
@@ -321,6 +322,7 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
             setMostrarAmigos(false);
             onVerPerfil(usuario);
           }}
+          onAmigosAtualizados={buscarPerfil}
         />
       )}
     </div>

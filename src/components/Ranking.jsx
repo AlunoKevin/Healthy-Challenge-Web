@@ -29,7 +29,7 @@ const Ranking = ({ onIrParaDashboard, onIrParaAtividades, onVerPerfil }) => {
         const endpoint =
           abaAtiva === 'global'
             ? `${API_URL}/leaderboard/global`
-            : `${API_URL}/leaderboard/grupo/1`;
+            : `${API_URL}/leaderboard/amigos`;
 
         const resposta = await fetch(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
@@ -115,6 +115,11 @@ const Ranking = ({ onIrParaDashboard, onIrParaAtividades, onVerPerfil }) => {
                 <div className="ranking-points">{user.pontos} pts</div>
               </div>
             ))
+          ) : abaAtiva === 'amigos' ? (
+            <div className="ranking-vazio-amigos">
+              <p>Você ainda não tem amigos no ranking. 💪</p>
+              <p>Adicione amigos no seu perfil e compare pontuações com quem te motiva!</p>
+            </div>
           ) : (
             <p style={{ textAlign: 'center', marginTop: '20px' }}>Nenhum utilizador encontrado.</p>
           )}
