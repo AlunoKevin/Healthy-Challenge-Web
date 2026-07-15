@@ -76,9 +76,10 @@ describe('Perfil Integration Tests', () => {
             INSERT INTO Amizade(
                 id_usuario_origem,
                 id_usuario_destino,
+                data_solicitacao,
                 status
             )
-            VALUES($1,$2,'ACEITA')
+            VALUES($1,$2,CURRENT_TIMESTAMP,'ACEITA')
         `,[idUsuario,idAmigo]);
 
         /*
