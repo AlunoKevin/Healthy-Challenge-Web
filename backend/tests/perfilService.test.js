@@ -5,6 +5,10 @@ jest.mock('../src/models/perfilModel');
 
 describe('perfilService.buscarPerfil', () => {
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test('retorna perfil completo com grupos e amigos', async () => {
 
     perfilModel.buscarPerfil.mockResolvedValue({

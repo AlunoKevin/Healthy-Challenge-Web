@@ -11,6 +11,8 @@ async function buscarPerfil(idUsuario) {
             u.data_cadastro,
             u.dias_consecutivos,
             u.ultimo_acesso,
+            u.bio,
+            u.foto_url,
 
             l.id_liga,
             l.nome AS liga,
@@ -97,23 +99,29 @@ async function atualizarPerfil(idUsuario,dados){
         UPDATE Usuario
 
         SET
-            nome = $1,
-            email = $2,
-            nivel_dificuldade = $3
+            nome = COALESCE($1, nome),
+            email = COALESCE($2, email),
+            nivel_dificuldade = COALESCE($3, nivel_dificuldade),
+            bio = COALESCE($4, bio),
+            foto_url = COALESCE($5, foto_url)
 
-        WHERE id_usuario = $4
+        WHERE id_usuario = $6
 
         RETURNING
             id_usuario,
             nome,
             email,
-            nivel_dificuldade
+            nivel_dificuldade,
+            bio,
+            foto_url
     `;
 
     const resultado = await pool.query(sql,[
-        dados.nome,
-        dados.email,
-        dados.nivel_dificuldade,
+        dados.nome ?? null,
+        dados.email ?? null,
+        dados.nivel_dificuldade ?? null,
+        dados.bio ?? null,
+        dados.foto_url ?? null,
         idUsuario
     ]);
 

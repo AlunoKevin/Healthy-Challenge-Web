@@ -3,6 +3,9 @@ import Header from "./Header";
 import "../styles/Ranking.css";
 import "../styles/Perfil.css";
 
+const API_URL = "http://localhost:3001";
+const TAMANHO_MAXIMO_FOTO = 2 * 1024 * 1024; // 2MB
+
 function obterIniciais(nome) {
   if (!nome) return "?";
   return nome
@@ -39,18 +42,73 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
   const aba = usuarioRanking?.aba === "amigos" ? "Amigos" : "Global";
 
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [photoDraft, setPhotoDraft] = useState(null);
   const [bio, setBio] = useState("");
   const [bioDraft, setBioDraft] = useState("");
   const [isEditingBio, setIsEditingBio] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+  const [erro, setErro] = useState("");
   const fileInputRef = useRef(null);
 
-  // Se a pessoa navegar de um perfil para outro, reseta o estado local.
+  // Se a pessoa navegar de um perfil para outro, reseta o estado local
+  // e busca os dados reais do proprio perfil no backend.
   useEffect(() => {
     setPhotoUrl(null);
+    setPhotoDraft(null);
     setBio("");
     setBioDraft("");
     setIsEditingBio(false);
+    setMensagem("");
+    setErro("");
+
+    if (!isOwnProfile) return;
+
+    async function buscarPerfil() {
+      try {
+        const token = localStorage.getItem("token");
+        const resposta = await fetch(`${API_URL}/perfil`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!resposta.ok) return;
+        const dados = await resposta.json();
+        setBio(dados.bio || "");
+        setBioDraft(dados.bio || "");
+        setPhotoUrl(dados.foto_url || null);
+        sincronizarFotoNoCache(dados.foto_url || null);
+      } catch (e) {
+        // mantem os campos vazios se a busca falhar
+      }
+    }
+    buscarPerfil();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perfilId]);
+
+  // mantem o cache local (usado pelo Header) sincronizado com a foto real
+  function sincronizarFotoNoCache(fotoUrl) {
+    try {
+      const cache = JSON.parse(localStorage.getItem("usuario")) || {};
+      localStorage.setItem("usuario", JSON.stringify({ ...cache, foto_url: fotoUrl }));
+    } catch (e) {
+      // se o cache estiver corrompido, ignora a sincronizacao
+    }
+  }
+
+  async function salvarNoBackend(dados) {
+    const token = localStorage.getItem("token");
+    const resposta = await fetch(`${API_URL}/perfil`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(dados)
+    });
+    if (!resposta.ok) {
+      const erroResposta = await resposta.json().catch(() => ({}));
+      throw new Error(erroResposta.erro || "Não foi possível salvar.");
+    }
+    return resposta.json();
+  }
 
   /* ===================== FOTO ===================== */
   function handlePhotoClick() {
@@ -61,23 +119,50 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > TAMANHO_MAXIMO_FOTO) {
+      setErro("A foto deve ter no máximo 2MB.");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (ev) => {
-      setPhotoUrl(ev.target.result);
-      // TODO: enviar `file` para o backend (multipart/form-data) e salvar
-      // a URL retornada, ex:
-      // const url = await api.uploadProfilePhoto(file);
-      // await api.updateProfile({ photoUrl: url });
+      setPhotoDraft(ev.target.result);
     };
     reader.readAsDataURL(file);
   }
 
+  async function handleSavePhoto() {
+    setMensagem("");
+    setErro("");
+    try {
+      await salvarNoBackend({ foto_url: photoDraft });
+      setPhotoUrl(photoDraft);
+      setPhotoDraft(null);
+      sincronizarFotoNoCache(photoDraft);
+      setMensagem("Foto atualizada com sucesso.");
+    } catch (e) {
+      setErro(e.message || "Erro ao salvar a foto.");
+    }
+  }
+
+  function handleCancelPhoto() {
+    setPhotoDraft(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   /* ===================== BIO ===================== */
-  function handleSaveBio() {
-    setBio(bioDraft.trim());
-    setIsEditingBio(false);
-    // TODO: persistir no backend, ex:
-    // api.updateProfile({ bio: bioDraft.trim() });
+  async function handleSaveBio() {
+    setMensagem("");
+    setErro("");
+    try {
+      const bioLimpa = bioDraft.trim();
+      await salvarNoBackend({ bio: bioLimpa });
+      setBio(bioLimpa);
+      setIsEditingBio(false);
+      setMensagem("Descrição atualizada com sucesso.");
+    } catch (e) {
+      setErro(e.message || "Erro ao salvar a descrição.");
+    }
   }
 
   function handleCancelBio() {
@@ -104,8 +189,8 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
           {/* ============ FOTO ============ */}
           <div className="profile-photo-wrap">
             <div className="profile-photo">
-              {photoUrl ? (
-                <img src={photoUrl} alt={`Foto de ${nome}`} />
+              {photoDraft || photoUrl ? (
+                <img src={photoDraft || photoUrl} alt={`Foto de ${nome}`} />
               ) : (
                 <span>{obterIniciais(nome)}</span>
               )}
@@ -135,6 +220,20 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
               </>
             )}
           </div>
+
+          {isOwnProfile && photoDraft && (
+            <div className="bio-edit-actions">
+              <button type="button" className="btn-secondary" onClick={handleCancelPhoto}>
+                Cancelar
+              </button>
+              <button type="button" className="btn-primary" onClick={handleSavePhoto}>
+                Salvar foto
+              </button>
+            </div>
+          )}
+
+          {mensagem && <p style={{ color: "#27ae60", textAlign: "center" }}>{mensagem}</p>}
+          {erro && <p style={{ color: "#e74c3c", textAlign: "center" }}>{erro}</p>}
 
           {/* ============ NOME ============ */}
           <h1 className="profile-name">{nome}</h1>

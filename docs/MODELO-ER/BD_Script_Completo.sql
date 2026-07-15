@@ -53,6 +53,10 @@ CREATE TABLE Usuario(
 
     dias_consecutivos INTEGER DEFAULT 0,
 
+    bio TEXT,
+
+    foto_url TEXT,
+
     CONSTRAINT fk_usuario_liga
         FOREIGN KEY(id_liga)
         REFERENCES Liga(id_liga),
