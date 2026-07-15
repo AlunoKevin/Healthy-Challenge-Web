@@ -211,7 +211,7 @@ export default function PainelAmigos({ amigos, onFechar, onVerPerfil, onAmigosAt
                   type="button"
                   key={amigo.id_usuario}
                   className="amigo-item"
-                  onClick={() => onVerPerfil({ id: amigo.id_usuario, nome: amigo.nome })}
+                  onClick={() => onVerPerfil({ id: amigo.id_usuario, nome: amigo.nome, foto_url: amigo.foto_url })}
                 >
                   <Avatar nome={amigo.nome} fotoUrl={amigo.foto_url} />
                   <div className="amigo-info">

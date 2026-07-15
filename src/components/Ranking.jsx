@@ -4,6 +4,16 @@ import '../styles/Ranking.css';
 
 const API_URL = 'http://localhost:3001';
 
+function obterIniciais(nome) {
+  if (!nome) return '?';
+  return nome
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((parte) => parte[0]?.toUpperCase())
+    .join('');
+}
+
 const Ranking = ({ onIrParaDashboard, onIrParaAtividades, onVerPerfil }) => {
   const [abaAtiva, setAbaAtiva] = useState('global');
   const [usuarios, setUsuarios] = useState([]);
@@ -46,6 +56,7 @@ const Ranking = ({ onIrParaDashboard, onIrParaAtividades, onVerPerfil }) => {
             return {
               id: idUsuario || Math.random(),
               nome: user.nome || user.usuario || 'Utilizador',
+              foto_url: user.foto_url || null,
               pontos: user.pontuacao_total ?? user.pontos ?? user.pontuacao ?? user.score ?? 0,
               badge: user.liga || '—',
               eUsuarioLogado: meuId !== '' && idUsuario !== '' && meuId === idUsuario,
@@ -108,6 +119,13 @@ const Ranking = ({ onIrParaDashboard, onIrParaAtividades, onVerPerfil }) => {
                 style={{ cursor: 'pointer' }}
               >
                 <div className="ranking-position">#{index + 1}</div>
+                <div className="ranking-avatar">
+                  {user.foto_url ? (
+                    <img src={user.foto_url} alt={`Foto de ${user.nome}`} />
+                  ) : (
+                    <span>{obterIniciais(user.nome)}</span>
+                  )}
+                </div>
                 <div className="ranking-info">
                   <span className="ranking-name">{user.eUsuarioLogado ? 'Você' : user.nome}</span>
                   <span className="ranking-badge">{user.badge}</span>
