@@ -243,59 +243,69 @@ describe('desafioController.criar', () => {
 
   test('retorna 201 ao criar desafio com dados validos', async () => {
     desafioService.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, ativo: true });
-    const req = { body: { titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100 } };
+    const req = { body: { titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100, id_jogo: 1 }, admin: { id_administrador: 1 } };
     const res = mockRes();
 
     await desafioController.criar(req, res);
 
-    expect(desafioService.criar).toHaveBeenCalledWith('Beber agua', null, 100);
+    expect(desafioService.criar).toHaveBeenCalledWith('Beber agua', null, 100, 1, 1);
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
   test('retorna 400 quando titulo esta ausente', async () => {
-    const req = { body: { pontuacao_prevista: 100 } };
+    const req = { body: { pontuacao_prevista: 100, id_jogo: 1 }, admin: { id_administrador: 1 } };
     const res = mockRes();
 
     await desafioController.criar(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo, pontuacao_prevista e id_jogo sao obrigatorios' });
   });
 
   test('retorna 400 quando pontuacao_prevista esta ausente', async () => {
-    const req = { body: { titulo: 'Beber agua' } };
+    const req = { body: { titulo: 'Beber agua', id_jogo: 1 }, admin: { id_administrador: 1 } };
     const res = mockRes();
 
     await desafioController.criar(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo, pontuacao_prevista e id_jogo sao obrigatorios' });
   });
 
   test('retorna 400 quando pontuacao_prevista e zero', async () => {
-    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 0 } };
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 0, id_jogo: 1 }, admin: { id_administrador: 1 } };
     const res = mockRes();
 
     await desafioController.criar(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo, pontuacao_prevista e id_jogo sao obrigatorios' });
+  });
+
+  test('retorna 400 quando id_jogo esta ausente', async () => {
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 100 }, admin: { id_administrador: 1 } };
+    const res = mockRes();
+
+    await desafioController.criar(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo, pontuacao_prevista e id_jogo sao obrigatorios' });
   });
 
   test('retorna 400 quando pontuacao_prevista nao e numerica', async () => {
-    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 'abc' } };
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 'abc', id_jogo: 1 }, admin: { id_administrador: 1 } };
     const res = mockRes();
 
     await desafioController.criar(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+    expect(res.json).toHaveBeenCalledWith({ erro: 'titulo, pontuacao_prevista e id_jogo sao obrigatorios' });
     expect(desafioService.criar).not.toHaveBeenCalled();
   });
 
   test('retorna 500 quando service lanca erro sem status', async () => {
     desafioService.criar.mockRejectedValue(new Error('falha'));
-    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 100 } };
+    const req = { body: { titulo: 'Beber agua', pontuacao_prevista: 100, id_jogo: 1 }, admin: { id_administrador: 1 } };
     const res = mockRes();
 
     await desafioController.criar(req, res);

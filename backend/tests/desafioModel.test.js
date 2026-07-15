@@ -146,16 +146,16 @@ describe('desafioModel.buscarDoUsuario', () => {
 describe('desafioModel.criar', () => {
   test('retorna o desafio criado', async () => {
     pool.query.mockResolvedValue({
-      rows: [{ id_desafio: 1, titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100, ativo: true }]
+      rows: [{ id_desafio: 1, titulo: 'Beber agua', descricao: null, pontuacao_prevista: 100, id_jogo: 1, id_administrador: 1, ativo: true }]
     });
 
-    const resultado = await desafioModel.criar('Beber agua', null, 100);
+    const resultado = await desafioModel.criar('Beber agua', null, 100, 1, 1);
 
     expect(resultado.titulo).toBe('Beber agua');
     expect(resultado.ativo).toBe(true);
     expect(pool.query).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO Desafio'),
-      ['Beber agua', null, 100]
+      ['Beber agua', null, 100, 1, 1]
     );
   });
 });

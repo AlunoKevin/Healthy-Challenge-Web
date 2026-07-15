@@ -21,4 +21,17 @@ async function buscarPerfil(idUsuario){
     };
 }
 
-module.exports = { buscarPerfil};
+async function atualizarPerfil(idUsuario, dados){
+
+    const perfilAtualizado = await perfilModel.atualizarPerfil(idUsuario, dados);
+
+    if(!perfilAtualizado){
+        const erro = new Error('usuario nao encontrado');
+        erro.status = 404;
+        throw erro;
+    }
+
+    return perfilAtualizado;
+}
+
+module.exports = { buscarPerfil, atualizarPerfil };

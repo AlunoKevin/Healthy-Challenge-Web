@@ -84,13 +84,13 @@ async function buscarConcluidosDoUsuario(id_usuario) {
 }
 
 // cria um novo desafio
-async function criar(titulo, descricao, pontuacao_prevista) {
+async function criar(titulo, descricao, pontuacao_prevista, id_jogo, id_administrador) {
   const sql = `
-    INSERT INTO Desafio (titulo, descricao, pontuacao_prevista, ativo)
-    VALUES ($1, $2, $3, true)
+    INSERT INTO Desafio (titulo, descricao, pontuacao_prevista, id_jogo, id_administrador, ativo)
+    VALUES ($1, $2, $3, $4, $5, true)
     RETURNING *
   `;
-  const resultado = await pool.query(sql, [titulo, descricao, pontuacao_prevista]);
+  const resultado = await pool.query(sql, [titulo, descricao, pontuacao_prevista, id_jogo, id_administrador]);
   return resultado.rows[0];
 }
 
