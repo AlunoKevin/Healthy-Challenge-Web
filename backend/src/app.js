@@ -13,7 +13,8 @@ const historicoRoutes = require('./routes/historicoRoutes');
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+// limite maior que o padrao (100kb) para caber a foto de perfil em base64
+app.use(express.json({ limit: '4mb' }));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
