@@ -45,7 +45,7 @@ const Ranking = ({ onIrParaDashboard, onIrParaAtividades, onVerPerfil }) => {
 
             return {
               id: idUsuario || Math.random(),
-              nome: user.nome || 'Utilizador',
+              nome: user.nome || user.usuario || 'Utilizador',
               pontos: user.pontuacao_total ?? user.pontos ?? user.pontuacao ?? user.score ?? 0,
               badge: user.nivel_dificuldade || 'Atleta',
               eUsuarioLogado: meuId !== '' && idUsuario !== '' && meuId === idUsuario,
