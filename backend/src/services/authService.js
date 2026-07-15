@@ -66,7 +66,8 @@ async function login(email, senha) {
     nome: usuario.nome,
     email: usuario.email,
     nivel_dificuldade: usuario.nivel_dificuldade,
-    id_liga: usuario.id_liga
+    id_liga: usuario.id_liga,
+    liga: usuario.liga
   };
   return { token: token, usuario: dadosUsuario };
 }

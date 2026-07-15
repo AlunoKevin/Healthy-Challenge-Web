@@ -1,15 +1,25 @@
 const pool = require('../config/conexao');
 
-// busca um usuario pelo email, retorna a linha ou undefined
+// busca um usuario pelo email, com o nome da liga atual, retorna a linha ou undefined
 async function buscarPorEmail(email) {
-  const sql = 'SELECT * FROM Usuario WHERE email = $1';
+  const sql = `
+    SELECT u.*, l.nome AS liga
+    FROM Usuario u
+    LEFT JOIN Liga l ON l.id_liga = u.id_liga
+    WHERE u.email = $1
+  `;
   const resultado = await pool.query(sql, [email]);
   return resultado.rows[0];
 }
 
-// busca um usuario pelo id
+// busca um usuario pelo id, com o nome da liga atual
 async function buscarPorId(id) {
-  const sql = 'SELECT * FROM Usuario WHERE id_usuario = $1';
+  const sql = `
+    SELECT u.*, l.nome AS liga
+    FROM Usuario u
+    LEFT JOIN Liga l ON l.id_liga = u.id_liga
+    WHERE u.id_usuario = $1
+  `;
   const resultado = await pool.query(sql, [id]);
   return resultado.rows[0];
 }

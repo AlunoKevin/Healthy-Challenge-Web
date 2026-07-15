@@ -36,8 +36,6 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
     ? usuarioLogado.nome || usuarioRanking?.nome || "Você"
     : usuarioRanking?.nome || "Utilizador";
 
-  const badge =
-    usuarioRanking?.badge || usuarioLogado.nivel_dificuldade || "Atleta";
   const pontos = usuarioRanking?.pontos;
   const posicao = usuarioRanking?.posicao;
   const aba = usuarioRanking?.aba === "amigos" ? "Amigos" : "Global";
@@ -51,7 +49,10 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
   const [erro, setErro] = useState("");
   const [amigos, setAmigos] = useState([]);
   const [mostrarAmigos, setMostrarAmigos] = useState(false);
+  const [liga, setLiga] = useState(usuarioLogado.liga || null);
   const fileInputRef = useRef(null);
+
+  const badge = usuarioRanking?.badge || liga || "—";
 
   // Se a pessoa navegar de um perfil para outro, reseta o estado local
   // e busca os dados reais do proprio perfil no backend.
@@ -65,6 +66,7 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
     setErro("");
     setAmigos([]);
     setMostrarAmigos(false);
+    setLiga(null);
 
     if (!isOwnProfile) return;
 
@@ -84,6 +86,7 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
       setBioDraft(dados.bio || "");
       setPhotoUrl(dados.foto_url || null);
       setAmigos(dados.amigos || []);
+      setLiga(dados.liga || null);
       sincronizarFotoNoCache(dados.foto_url || null);
     } catch (e) {
       // mantem os campos vazios se a busca falhar
