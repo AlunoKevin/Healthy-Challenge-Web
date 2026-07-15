@@ -5,12 +5,6 @@ import '../styles/Ranking.css';
 const API_URL = 'http://localhost:3001';
 
 const abas = {
-  disponiveis: {
-    label: 'Disponíveis',
-    endpoint: '/desafios',
-    vazio: 'Nenhum desafio disponível.',
-    acao: 'inscrever'
-  },
   meus: {
     label: 'Meus desafios',
     endpoint: '/desafios/meus',
@@ -22,6 +16,12 @@ const abas = {
     endpoint: '/desafios/concluidos',
     vazio: 'Você ainda não concluiu nenhum desafio.',
     acao: null
+  },
+  disponiveis: {
+    label: 'Disponíveis',
+    endpoint: '/desafios',
+    vazio: 'Nenhum desafio disponível.',
+    acao: 'inscrever'
   }
 };
 
@@ -36,7 +36,7 @@ async function buscarIds(endpoint, token) {
 }
 
 const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
-  const [abaAtiva, setAbaAtiva] = useState('disponiveis');
+  const [abaAtiva, setAbaAtiva] = useState('meus');
   const [itens, setItens] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState('');
