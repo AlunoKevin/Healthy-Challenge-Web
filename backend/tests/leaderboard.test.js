@@ -111,6 +111,32 @@ describe('leaderboardModel.buscarPosicaoDoUsuario', () => {
   });
 });
 
+describe('leaderboardModel.buscarLeaderboardAmigos', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('retorna o ranking do usuario com seus amigos', async () => {
+    pool.query.mockResolvedValue({
+      rows: [
+        { id_usuario: 1, nome: 'Eu', pontuacao_total: 500, posicao: 1 },
+        { id_usuario: 2, nome: 'Amigo', pontuacao_total: 300, posicao: 2 }
+      ]
+    });
+
+    const resultado = await leaderboardModel.buscarLeaderboardAmigos(1);
+
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining('Amizade'), [1]);
+    expect(resultado).toHaveLength(2);
+  });
+
+  test('retorna array vazio quando o usuario nao tem amigos', async () => {
+    pool.query.mockResolvedValue({ rows: [] });
+
+    const resultado = await leaderboardModel.buscarLeaderboardAmigos(1);
+
+    expect(resultado).toEqual([]);
+  });
+});
+
 describe('leaderboardModel.buscarLeaderboardGrupo', () => {
   beforeEach(() => jest.clearAllMocks());
 

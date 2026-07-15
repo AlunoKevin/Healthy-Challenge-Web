@@ -239,6 +239,31 @@
   border-radius: 8px;
 }
 
+/* ===== ESTADO VAZIO (RANKING DE AMIGOS) ===== */
+.ranking-vazio-amigos {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  color: #2c3e50;
+  background: #f0fdf4;
+  border: 2px dashed #a5d6a7;
+  border-radius: 16px;
+}
+
+.ranking-vazio-amigos p {
+  margin: 0;
+}
+
+.ranking-vazio-amigos p:first-child {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.ranking-vazio-amigos p:last-child {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
 /* ===== ANIMAÇÕES ===== */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(30px); }

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Header from "./Header";
+import PainelAmigos from "./PainelAmigos";
 import "../styles/Ranking.css";
 import "../styles/Perfil.css";
 
@@ -48,6 +49,8 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
+  const [amigos, setAmigos] = useState([]);
+  const [mostrarAmigos, setMostrarAmigos] = useState(false);
   const fileInputRef = useRef(null);
 
   // Se a pessoa navegar de um perfil para outro, reseta o estado local
@@ -60,28 +63,32 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
     setIsEditingBio(false);
     setMensagem("");
     setErro("");
+    setAmigos([]);
+    setMostrarAmigos(false);
 
     if (!isOwnProfile) return;
 
-    async function buscarPerfil() {
-      try {
-        const token = localStorage.getItem("token");
-        const resposta = await fetch(`${API_URL}/perfil`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!resposta.ok) return;
-        const dados = await resposta.json();
-        setBio(dados.bio || "");
-        setBioDraft(dados.bio || "");
-        setPhotoUrl(dados.foto_url || null);
-        sincronizarFotoNoCache(dados.foto_url || null);
-      } catch (e) {
-        // mantem os campos vazios se a busca falhar
-      }
-    }
     buscarPerfil();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perfilId]);
+
+  async function buscarPerfil() {
+    try {
+      const token = localStorage.getItem("token");
+      const resposta = await fetch(`${API_URL}/perfil`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!resposta.ok) return;
+      const dados = await resposta.json();
+      setBio(dados.bio || "");
+      setBioDraft(dados.bio || "");
+      setPhotoUrl(dados.foto_url || null);
+      setAmigos(dados.amigos || []);
+      sincronizarFotoNoCache(dados.foto_url || null);
+    } catch (e) {
+      // mantem os campos vazios se a busca falhar
+    }
+  }
 
   // mantem o cache local (usado pelo Header) sincronizado com a foto real
   function sincronizarFotoNoCache(fotoUrl) {
@@ -293,9 +300,31 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
               <span className="rank-pill__label">🔥 Nível</span>
               <span className="rank-pill__value">{badge}</span>
             </div>
+            {isOwnProfile && (
+              <button
+                type="button"
+                className="rank-pill rank-pill--clicavel"
+                onClick={() => setMostrarAmigos(true)}
+              >
+                <span className="rank-pill__label">👥 Amigos</span>
+                <span className="rank-pill__value">{amigos.length}</span>
+              </button>
+            )}
           </div>
         </section>
       </main>
+
+      {mostrarAmigos && (
+        <PainelAmigos
+          amigos={amigos}
+          onFechar={() => setMostrarAmigos(false)}
+          onVerPerfil={(usuario) => {
+            setMostrarAmigos(false);
+            onVerPerfil(usuario);
+          }}
+          onAmigosAtualizados={buscarPerfil}
+        />
+      )}
     </div>
   );
 }
