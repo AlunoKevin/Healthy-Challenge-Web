@@ -8,6 +8,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const grupoRoutes = require('./routes/grupoRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const perfilRoutes = require('./routes/perfilRoutes');
+const historicoRoutes = require('./routes/historicoRoutes');
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use('/admin', adminRoutes);
 app.use('/grupos', grupoRoutes);
 app.use('/usuario', usuarioRoutes);
 app.use('/perfil', perfilRoutes);
+app.use('/historico', historicoRoutes);
 
 module.exports = app;
