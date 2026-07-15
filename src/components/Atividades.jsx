@@ -161,12 +161,15 @@ const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
           ) : (
             itens.map((item) => {
               const id = item.id_desafio || item.id;
+              const pontos = item.pontuacao ?? item.pontuacao_prevista;
               return (
                 <div key={id} className="ranking-card" style={{ display: 'flex', alignItems: 'center', padding: '15px' }}>
                   <span className="ranking-name">{item.titulo || item.nome}</span>
 
-                  {acaoDaAba && (
-                    <div style={{ marginLeft: 'auto' }}>
+                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    {pontos != null && <span className="ranking-points">{pontos} pts</span>}
+
+                    {acaoDaAba && (
                       <button
                         onClick={() => executarAcao(id, acaoDaAba)}
                         style={{
@@ -180,8 +183,8 @@ const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
                       >
                         {acaoDaAba === 'inscrever' ? 'Inscrever' : 'Concluir'}
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               );
             })
