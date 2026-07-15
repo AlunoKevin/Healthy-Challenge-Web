@@ -8,7 +8,7 @@ const desafioModel = require('../src/models/desafioModel');
 jest.mock('../src/models/desafioModel');
 
 const tokenValido = jwt.sign({ id_usuario: 1, email: 'a@a.com' }, 'segredo_teste');
-const tokenAdmin = jwt.sign({ tipo: 'admin', email: 'admin@a.com' }, 'segredo_teste');
+const tokenAdmin = jwt.sign({ tipo: 'admin', id_administrador: 1, email: 'admin@a.com' }, 'segredo_teste');
 
 describe('GET /desafios', () => {
   beforeEach(() => {
@@ -195,22 +195,31 @@ describe('POST /desafios', () => {
   });
 
   test('retorna 201 ao criar desafio com token admin', async () => {
-    desafioModel.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, ativo: true });
+    desafioModel.criar.mockResolvedValue({ id_desafio: 1, titulo: 'Beber agua', pontuacao_prevista: 100, id_jogo: 1, id_administrador: 1, ativo: true });
 
     const resposta = await request(app)
       .post('/desafios')
       .set('Authorization', 'Bearer ' + tokenAdmin)
-      .send({ titulo: 'Beber agua', pontuacao_prevista: 100 });
+      .send({ titulo: 'Beber agua', pontuacao_prevista: 100, id_jogo: 1 });
 
     expect(resposta.status).toBe(201);
     expect(resposta.body.titulo).toBe('Beber agua');
+    expect(desafioModel.criar).toHaveBeenCalledWith('Beber agua', null, 100, 1, 1);
   });
 
   test('retorna 400 quando titulo esta ausente', async () => {
     const resposta = await request(app)
       .post('/desafios')
       .set('Authorization', 'Bearer ' + tokenAdmin)
-      .send({ pontuacao_prevista: 100 });
+      .send({ pontuacao_prevista: 100, id_jogo: 1 });
+    expect(resposta.status).toBe(400);
+  });
+
+  test('retorna 400 quando id_jogo esta ausente', async () => {
+    const resposta = await request(app)
+      .post('/desafios')
+      .set('Authorization', 'Bearer ' + tokenAdmin)
+      .send({ titulo: 'Beber agua', pontuacao_prevista: 100 });
     expect(resposta.status).toBe(400);
   });
 });

@@ -78,12 +78,12 @@ async function meusConcluidos(req, res) {
 
 // cria um novo desafio com validacao dos campos obrigatorios
 async function criar(req, res) {
-  const { titulo, descricao, pontuacao_prevista } = req.body;
-  if (!titulo || !pontuacaoValida(pontuacao_prevista)) {
-    return res.status(400).json({ erro: 'titulo e pontuacao_prevista sao obrigatorios' });
+  const { titulo, descricao, pontuacao_prevista, id_jogo } = req.body;
+  if (!titulo || !pontuacaoValida(pontuacao_prevista) || !idValido(id_jogo)) {
+    return res.status(400).json({ erro: 'titulo, pontuacao_prevista e id_jogo sao obrigatorios' });
   }
   try {
-    const desafio = await desafioService.criar(titulo, descricao || null, pontuacao_prevista);
+    const desafio = await desafioService.criar(titulo, descricao || null, pontuacao_prevista, id_jogo, req.admin.id_administrador);
     return res.status(201).json(desafio);
   } catch (erro) {
     const status = erro.status || 500;

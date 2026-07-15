@@ -84,3 +84,47 @@ describe('perfilService.buscarPerfil', () => {
   });
 
 });
+
+describe('perfilService.atualizarPerfil', () => {
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('atualiza perfil e retorna dados atualizados', async () => {
+
+    const dados = {
+      nome: 'Novo Nome',
+      email: 'novo@test.com',
+      nivel_dificuldade: 'D'
+    };
+
+    perfilModel.atualizarPerfil.mockResolvedValue({
+      id_usuario: 1,
+      ...dados
+    });
+
+    const resultado = await perfilService.atualizarPerfil(1, dados);
+
+    expect(perfilModel.atualizarPerfil)
+      .toHaveBeenCalledWith(1, dados);
+
+    expect(resultado).toEqual({
+      id_usuario: 1,
+      ...dados
+    });
+  });
+
+  test('lanca erro 404 quando usuario nao existe', async () => {
+
+    perfilModel.atualizarPerfil.mockResolvedValue(undefined);
+
+    await expect(
+      perfilService.atualizarPerfil(999, { nome: 'X' })
+    ).rejects.toMatchObject({
+      status: 404,
+      message: 'usuario nao encontrado'
+    });
+  });
+
+});
