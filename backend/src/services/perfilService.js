@@ -20,3 +20,5 @@ async function buscarPerfil(idUsuario){
         amigos
     };
 }
+
+module.exports = { buscarPerfil};
