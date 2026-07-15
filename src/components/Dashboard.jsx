@@ -7,7 +7,7 @@ const API_URL = 'http://localhost:3001';
 
 // Resumo pessoal do usuário logado, aberto ao clicar na logo do app.
 const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
-  const [resumo, setResumo] = useState({ pontos: 0, posicao: null, badge: 'Atleta', desafiosAtivos: 0 });
+  const [resumo, setResumo] = useState({ pontos: 0, posicao: null, badge: '—', desafiosAtivos: 0 });
   const [carregando, setCarregando] = useState(true);
 
   let usuarioLogado = {};
@@ -34,7 +34,7 @@ const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
 
         let pontos = 0;
         let posicao = null;
-        let badge = usuarioLogado.nivel_dificuldade || 'Atleta';
+        let badge = usuarioLogado.liga || '—';
 
         if (respostaRanking.ok) {
           const dados = await respostaRanking.json();
@@ -42,7 +42,7 @@ const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
           if (indice >= 0) {
             pontos = dados[indice].pontuacao_total ?? 0;
             posicao = indice + 1;
-            badge = dados[indice].nivel_dificuldade || badge;
+            badge = dados[indice].liga || badge;
           }
         }
 

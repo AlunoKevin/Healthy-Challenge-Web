@@ -15,32 +15,36 @@ async function buscarLeaderboardGlobal(opcoes = {}) {
       filtroLiga = `WHERE u.id_liga = $${params.length}`;
     }
     sql = `
-      SELECT u.id_usuario, u.nome,
+      SELECT u.id_usuario, u.nome, l.nome AS liga,
              COALESCE(SUM(cd.pontuacao),0) AS pontuacao_total,
              RANK() OVER (ORDER BY COALESCE(SUM(cd.pontuacao),0) DESC) AS posicao
       FROM Usuario u
+      LEFT JOIN Liga l ON l.id_liga = u.id_liga
       LEFT JOIN Conclusao_Desafio cd
         ON u.id_usuario = cd.id_usuario
        AND cd.data_conclusao BETWEEN $1 AND $2
       ${filtroLiga}
-      GROUP BY u.id_usuario, u.nome
+      GROUP BY u.id_usuario, u.nome, l.nome
       ORDER BY posicao
     `;
   } else if (idLiga) {
     // sem periodo: usa a view e junta com Usuario so para filtrar pela liga, mantendo a posicao global
     params.push(idLiga);
     sql = `
-      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, mlg.pontuacao_total
+      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, l.nome AS liga, mlg.pontuacao_total
       FROM mv_leaderboard_global mlg
       JOIN Usuario u ON u.id_usuario = mlg.id_usuario
+      LEFT JOIN Liga l ON l.id_liga = u.id_liga
       WHERE u.id_liga = $1
       ORDER BY mlg.posicao
     `;
   } else {
     sql = `
-      SELECT posicao, id_usuario, nome, pontuacao_total
-      FROM mv_leaderboard_global
-      ORDER BY posicao
+      SELECT mlg.posicao, mlg.id_usuario, mlg.nome, l.nome AS liga, mlg.pontuacao_total
+      FROM mv_leaderboard_global mlg
+      JOIN Usuario u ON u.id_usuario = mlg.id_usuario
+      LEFT JOIN Liga l ON l.id_liga = u.id_liga
+      ORDER BY mlg.posicao
     `;
   }
 
@@ -62,13 +66,16 @@ async function buscarLeaderboardGlobal(opcoes = {}) {
 async function buscarLeaderboardGrupo(idGrupo) {
   const sql = `
     SELECT
-      posicao_grupo,
-      id_usuario,
-      usuario,
-      pontuacao_total
-    FROM mv_leaderboard_grupo
-    WHERE id_grupo = $1
-    ORDER BY posicao_grupo;
+      mlg.posicao_grupo,
+      mlg.id_usuario,
+      mlg.usuario,
+      l.nome AS liga,
+      mlg.pontuacao_total
+    FROM mv_leaderboard_grupo mlg
+    JOIN Usuario u ON u.id_usuario = mlg.id_usuario
+    LEFT JOIN Liga l ON l.id_liga = u.id_liga
+    WHERE mlg.id_grupo = $1
+    ORDER BY mlg.posicao_grupo;
   `;
 
   const resultado = await pool.query(sql, [idGrupo]);
@@ -96,14 +103,16 @@ async function buscarLeaderboardAmigos(idUsuario) {
     SELECT
       u.id_usuario,
       u.nome,
+      l.nome AS liga,
       COALESCE(SUM(cd.pontuacao),0) AS pontuacao_total,
       RANK() OVER (
         ORDER BY COALESCE(SUM(cd.pontuacao),0) DESC
       ) AS posicao
     FROM participantes p
     JOIN Usuario u ON u.id_usuario = p.id_usuario
+    LEFT JOIN Liga l ON l.id_liga = u.id_liga
     LEFT JOIN Conclusao_Desafio cd ON cd.id_usuario = u.id_usuario
-    GROUP BY u.id_usuario, u.nome
+    GROUP BY u.id_usuario, u.nome, l.nome
     ORDER BY posicao;
   `;
 
