@@ -40,7 +40,7 @@ const Header = ({ telaAtiva, onIrParaDashboard, onIrParaRanking, onIrParaAtivida
       <div className="header-right">
         <div className="profile-menu">
           <img
-            src={`https://ui-avatars.com/api/?name=${usuarioLogado.nome || 'User'}&background=4CAF50&color=fff`}
+            src={usuarioLogado.foto_url || `https://ui-avatars.com/api/?name=${usuarioLogado.nome || 'User'}&background=4CAF50&color=fff`}
             alt="Foto de Perfil"
             className="profile-pic"
             onClick={() => setDropdownAberto(!dropdownAberto)}

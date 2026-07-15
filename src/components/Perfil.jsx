@@ -74,6 +74,7 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
         setBio(dados.bio || "");
         setBioDraft(dados.bio || "");
         setPhotoUrl(dados.foto_url || null);
+        sincronizarFotoNoCache(dados.foto_url || null);
       } catch (e) {
         // mantem os campos vazios se a busca falhar
       }
@@ -81,6 +82,16 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
     buscarPerfil();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perfilId]);
+
+  // mantem o cache local (usado pelo Header) sincronizado com a foto real
+  function sincronizarFotoNoCache(fotoUrl) {
+    try {
+      const cache = JSON.parse(localStorage.getItem("usuario")) || {};
+      localStorage.setItem("usuario", JSON.stringify({ ...cache, foto_url: fotoUrl }));
+    } catch (e) {
+      // se o cache estiver corrompido, ignora a sincronizacao
+    }
+  }
 
   async function salvarNoBackend(dados) {
     const token = localStorage.getItem("token");
@@ -127,6 +138,7 @@ export default function Perfil({ usuarioRanking, onIrParaDashboard, onIrParaRank
       await salvarNoBackend({ foto_url: photoDraft });
       setPhotoUrl(photoDraft);
       setPhotoDraft(null);
+      sincronizarFotoNoCache(photoDraft);
       setMensagem("Foto atualizada com sucesso.");
     } catch (e) {
       setErro(e.message || "Erro ao salvar a foto.");
