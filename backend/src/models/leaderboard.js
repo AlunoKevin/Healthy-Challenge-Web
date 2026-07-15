@@ -76,6 +76,42 @@ async function buscarLeaderboardGrupo(idGrupo) {
   return resultado.rows;
 }
 
+// ranking entre o usuario e seus amigos aceitos; retorna [] quando ele nao tem amigos
+async function buscarLeaderboardAmigos(idUsuario) {
+  const sql = `
+    WITH amigos AS (
+      SELECT CASE
+        WHEN a.id_usuario_origem = $1 THEN a.id_usuario_destino
+        ELSE a.id_usuario_origem
+      END AS id_usuario
+      FROM Amizade a
+      WHERE (a.id_usuario_origem = $1 OR a.id_usuario_destino = $1)
+        AND a.status = 'ACEITA'
+    ),
+    participantes AS (
+      SELECT id_usuario FROM amigos
+      UNION
+      SELECT $1 WHERE EXISTS (SELECT 1 FROM amigos)
+    )
+    SELECT
+      u.id_usuario,
+      u.nome,
+      COALESCE(SUM(cd.pontuacao),0) AS pontuacao_total,
+      RANK() OVER (
+        ORDER BY COALESCE(SUM(cd.pontuacao),0) DESC
+      ) AS posicao
+    FROM participantes p
+    JOIN Usuario u ON u.id_usuario = p.id_usuario
+    LEFT JOIN Conclusao_Desafio cd ON cd.id_usuario = u.id_usuario
+    GROUP BY u.id_usuario, u.nome
+    ORDER BY posicao;
+  `;
+
+  const resultado = await pool.query(sql, [idUsuario]);
+
+  return resultado.rows;
+}
+
 // busca a posicao e a pontuacao do usuario no ranking global
 async function buscarPosicaoDoUsuario(idUsuario) {
   const sql = `
@@ -92,5 +128,6 @@ async function buscarPosicaoDoUsuario(idUsuario) {
 module.exports = {
   buscarLeaderboardGlobal,
   buscarLeaderboardGrupo,
+  buscarLeaderboardAmigos,
   buscarPosicaoDoUsuario
 };

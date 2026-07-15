@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const leaderboardModel = require('../models/leaderboard');
+const autenticacao = require('../middlewares/autenticacao');
 
 // converte um valor de query em inteiro positivo ou retorna undefined
 function inteiroPositivo(valor) {
@@ -40,6 +41,24 @@ router.get('/global', async (req, res) => {
 
     res.status(500).json({
       erro: 'Erro ao buscar leaderboard'
+    });
+  }
+});
+
+router.get('/amigos', autenticacao, async (req, res) => {
+  try {
+
+    const ranking =
+      await leaderboardModel.buscarLeaderboardAmigos(req.usuario.id_usuario);
+
+    res.json(ranking);
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    res.status(500).json({
+      erro: 'Erro ao buscar leaderboard de amigos'
     });
   }
 });

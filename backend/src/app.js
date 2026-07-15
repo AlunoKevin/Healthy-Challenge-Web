@@ -9,6 +9,7 @@ const grupoRoutes = require('./routes/grupoRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const perfilRoutes = require('./routes/perfilRoutes');
 const historicoRoutes = require('./routes/historicoRoutes');
+const amizadeRoutes = require('./routes/amizadeRoutes');
 
 const app = express();
 
@@ -33,5 +34,6 @@ app.use('/grupos', grupoRoutes);
 app.use('/usuario', usuarioRoutes);
 app.use('/perfil', perfilRoutes);
 app.use('/historico', historicoRoutes);
+app.use('/amizades', amizadeRoutes);
 
 module.exports = app;
