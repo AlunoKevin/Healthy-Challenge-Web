@@ -20,7 +20,9 @@ describe('perfilModel.buscarPerfil', () => {
         liga: 'Prata',
         desafios_concluidos: 12,
         pontos_totais: 3200,
-        media_pontos: 266.66
+        media_pontos: 266.66,
+        bio: 'Gosto de correr',
+        foto_url: 'data:image/png;base64,abc'
       }]
     });
 
@@ -30,6 +32,9 @@ describe('perfilModel.buscarPerfil', () => {
       expect.stringContaining('FROM Usuario u'),
       [1]
     );
+
+    expect(pool.query.mock.calls[0][0]).toEqual(expect.stringContaining('bio'));
+    expect(pool.query.mock.calls[0][0]).toEqual(expect.stringContaining('foto_url'));
 
     expect(resultado).toEqual({
       id_usuario: 1,
@@ -43,7 +48,9 @@ describe('perfilModel.buscarPerfil', () => {
       liga: 'Prata',
       desafios_concluidos: 12,
       pontos_totais: 3200,
-      media_pontos: 266.66
+      media_pontos: 266.66,
+      bio: 'Gosto de correr',
+      foto_url: 'data:image/png;base64,abc'
     });
   });
 
@@ -175,7 +182,9 @@ describe('perfilModel.atualizarPerfil', () => {
         id_usuario: 1,
         nome: 'Novo Nome',
         email: 'novo@test.com',
-        nivel_dificuldade: 'D'
+        nivel_dificuldade: 'D',
+        bio: null,
+        foto_url: null
       }]
     });
 
@@ -194,6 +203,8 @@ describe('perfilModel.atualizarPerfil', () => {
         'Novo Nome',
         'novo@test.com',
         'D',
+        null,
+        null,
         1
       ]
     );
@@ -202,8 +213,76 @@ describe('perfilModel.atualizarPerfil', () => {
       id_usuario: 1,
       nome: 'Novo Nome',
       email: 'novo@test.com',
-      nivel_dificuldade: 'D'
+      nivel_dificuldade: 'D',
+      bio: null,
+      foto_url: null
     });
+  });
+
+  test('atualiza somente a bio sem afetar os demais campos', async () => {
+
+    pool.query.mockResolvedValue({
+      rows: [{
+        id_usuario: 1,
+        nome: 'Kevin',
+        email: 'kevin@test.com',
+        nivel_dificuldade: 'M',
+        bio: 'Nova bio',
+        foto_url: null
+      }]
+    });
+
+    const resultado = await perfilModel.atualizarPerfil(
+      1,
+      { bio: 'Nova bio' }
+    );
+
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('COALESCE'),
+      [
+        null,
+        null,
+        null,
+        'Nova bio',
+        null,
+        1
+      ]
+    );
+
+    expect(resultado.bio).toBe('Nova bio');
+  });
+
+  test('atualiza somente a foto_url sem afetar os demais campos', async () => {
+
+    pool.query.mockResolvedValue({
+      rows: [{
+        id_usuario: 1,
+        nome: 'Kevin',
+        email: 'kevin@test.com',
+        nivel_dificuldade: 'M',
+        bio: null,
+        foto_url: 'data:image/png;base64,xyz'
+      }]
+    });
+
+    const resultado = await perfilModel.atualizarPerfil(
+      1,
+      { foto_url: 'data:image/png;base64,xyz' }
+    );
+
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('COALESCE'),
+      [
+        null,
+        null,
+        null,
+        null,
+        'data:image/png;base64,xyz',
+        1
+      ]
+    );
+
+    expect(resultado.foto_url).toBe('data:image/png;base64,xyz');
   });
 
   test('retorna undefined quando usuario nao existe', async () => {
