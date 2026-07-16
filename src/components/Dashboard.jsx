@@ -7,7 +7,7 @@ const API_URL = 'http://localhost:3001';
 
 // Resumo pessoal do usuário logado, aberto ao clicar na logo do app.
 const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
-  const [resumo, setResumo] = useState({ pontos: 0, posicao: null, badge: '—', desafiosAtivos: 0 });
+  const [resumo, setResumo] = useState({ pontos: 0, posicao: null, badge: '—', desafiosAtivos: 0, sequencia: 0 });
   const [carregando, setCarregando] = useState(true);
 
   let usuarioLogado = {};
@@ -27,9 +27,10 @@ const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
         const token = localStorage.getItem('token');
         const meuId = String(usuarioLogado.id || usuarioLogado.id_usuario || '');
 
-        const [respostaRanking, respostaDesafios] = await Promise.all([
+        const [respostaRanking, respostaDesafios, respostaPerfil] = await Promise.all([
           fetch(`${API_URL}/leaderboard/global`, { headers: { Authorization: `Bearer ${token}` } }),
           fetch(`${API_URL}/desafios/meus`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_URL}/perfil`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         let pontos = 0;
@@ -52,7 +53,13 @@ const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
           desafiosAtivos = Array.isArray(desafios) ? desafios.length : 0;
         }
 
-        setResumo({ pontos, posicao, badge, desafiosAtivos });
+        let sequencia = 0;
+        if (respostaPerfil.ok) {
+          const perfil = await respostaPerfil.json();
+          sequencia = perfil.dias_consecutivos ?? 0;
+        }
+
+        setResumo({ pontos, posicao, badge, desafiosAtivos, sequencia });
       } catch (error) {
         console.error('Erro ao buscar resumo do dashboard:', error);
       } finally {
@@ -89,12 +96,18 @@ const Dashboard = ({ onIrParaRanking, onIrParaAtividades, onVerPerfil }) => {
               <span className="rank-pill__value">{resumo.posicao ? `#${resumo.posicao}` : '—'}</span>
             </div>
             <div className="rank-pill">
-              <span className="rank-pill__label">🔥 Nível</span>
+              <span className="rank-pill__label">🏅 Nível</span>
               <span className="rank-pill__value">{resumo.badge}</span>
             </div>
             <div className="rank-pill">
               <span className="rank-pill__label">🎯 Desafios ativos</span>
               <span className="rank-pill__value">{resumo.desafiosAtivos}</span>
+            </div>
+            <div className="rank-pill">
+              <span className="rank-pill__label">🔥 Sequência de login</span>
+              <span className="rank-pill__value">
+                {resumo.sequencia} {resumo.sequencia === 1 ? 'dia' : 'dias'}
+              </span>
             </div>
           </div>
         )}

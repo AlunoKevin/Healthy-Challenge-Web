@@ -54,8 +54,6 @@ const Cadastro = ({ onIrParaLogin, onSucesso }) => {
         throw new Error(dados.erro || 'Erro ao cadastrar usuário.');
       }
 
-      alert('Cadastro realizado com sucesso!');
-
       setFormData({
         nome: '',
         email: '',
