@@ -5,12 +5,6 @@ import '../styles/Ranking.css';
 const API_URL = 'http://localhost:3001';
 
 const abas = {
-  disponiveis: {
-    label: 'Disponíveis',
-    endpoint: '/desafios',
-    vazio: 'Nenhum desafio disponível.',
-    acao: 'inscrever'
-  },
   meus: {
     label: 'Meus desafios',
     endpoint: '/desafios/meus',
@@ -22,6 +16,12 @@ const abas = {
     endpoint: '/desafios/concluidos',
     vazio: 'Você ainda não concluiu nenhum desafio.',
     acao: null
+  },
+  disponiveis: {
+    label: 'Disponíveis',
+    endpoint: '/desafios',
+    vazio: 'Nenhum desafio disponível.',
+    acao: 'inscrever'
   }
 };
 
@@ -36,7 +36,7 @@ async function buscarIds(endpoint, token) {
 }
 
 const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
-  const [abaAtiva, setAbaAtiva] = useState('disponiveis');
+  const [abaAtiva, setAbaAtiva] = useState('meus');
   const [itens, setItens] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState('');
@@ -130,56 +130,41 @@ const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
       <div className="ranking-container">
         <h2>🎯 Central de Atividades</h2>
 
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', justifyContent: 'center' }}>
+        <div className="atividades-tabs">
           {Object.entries(abas).map(([chave, aba]) => (
             <button
               key={chave}
+              className={abaAtiva === chave ? 'atividades-tab active' : 'atividades-tab'}
               onClick={() => setAbaAtiva(chave)}
-              style={{
-                padding: '10px 16px',
-                borderRadius: '10px',
-                border: abaAtiva === chave ? '2px solid #27ae60' : '1px solid #ddd',
-                background: abaAtiva === chave ? '#eafaf1' : '#fff',
-                color: abaAtiva === chave ? '#27ae60' : '#2c3e50',
-                cursor: 'pointer',
-                fontWeight: 600
-              }}
             >
               {aba.label}
             </button>
           ))}
         </div>
 
-        {mensagem && <p style={{ color: '#27ae60', textAlign: 'center' }}>{mensagem}</p>}
-        {erro && <p style={{ color: '#e74c3c', textAlign: 'center' }}>{erro}</p>}
+        {mensagem && <p className="mensagem-sucesso">{mensagem}</p>}
+        {erro && <p className="mensagem-erro">{erro}</p>}
 
         <div className="ranking-list">
           {carregando ? (
-            <p>Carregando...</p>
+            <p className="estado-mensagem">Carregando...</p>
           ) : itens.length === 0 ? (
-            <p>{abas[abaAtiva].vazio}</p>
+            <p className="estado-mensagem">{abas[abaAtiva].vazio}</p>
           ) : (
             itens.map((item) => {
               const id = item.id_desafio || item.id;
               const pontos = item.pontuacao ?? item.pontuacao_prevista;
               return (
-                <div key={id} className="ranking-card" style={{ display: 'flex', alignItems: 'center', padding: '15px' }}>
+                <div key={id} className="ranking-card" style={{ padding: '1.1rem 1.5rem' }}>
                   <span className="ranking-name">{item.titulo || item.nome}</span>
 
-                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
                     {pontos != null && <span className="ranking-points">{pontos} pts</span>}
 
                     {acaoDaAba && (
                       <button
+                        className={`atividade-acao-btn atividade-acao-btn--${acaoDaAba === 'inscrever' ? 'inscrever' : 'concluir'}`}
                         onClick={() => executarAcao(id, acaoDaAba)}
-                        style={{
-                          padding: '8px 15px',
-                          borderRadius: '8px',
-                          border: 'none',
-                          cursor: 'pointer',
-                          background: acaoDaAba === 'inscrever' ? '#3498db' : '#4CAF50',
-                          color: 'white'
-                        }}
                       >
                         {acaoDaAba === 'inscrever' ? 'Inscrever' : 'Concluir'}
                       </button>

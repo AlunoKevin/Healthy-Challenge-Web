@@ -48,7 +48,6 @@ const Login = ({ onIrParaCadastro, onIrParaAdminLogin, onSucesso }) => {
       localStorage.setItem('token', dados.token);
       localStorage.setItem('usuario', JSON.stringify(dados.usuario));
 
-      alert('Login realizado com sucesso!');
       onSucesso();
 
       // Futuramente, aqui será feito o redirecionamento para a página inicial.

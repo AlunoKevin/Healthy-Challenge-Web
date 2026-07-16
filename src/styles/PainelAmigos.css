@@ -2,7 +2,9 @@
 .amigos-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(44, 62, 80, 0.5);
+  background: rgba(31, 45, 40, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +25,7 @@
   max-height: 80vh;
   background: #ffffff;
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -37,6 +39,7 @@
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
   border-bottom: 2px solid #edf2f7;
+  background: linear-gradient(180deg, #fbfffd 0%, #ffffff 100%);
 }
 
 .amigos-painel-header h2 {
@@ -62,8 +65,9 @@
 }
 
 .amigos-fechar-btn:hover {
-  background: #edf2f7;
-  color: #2c3e50;
+  background: #fdf2f0;
+  color: #c0392b;
+  transform: rotate(90deg);
 }
 
 /* ============ TABS ============ */
@@ -77,12 +81,12 @@
   position: relative;
   flex: 1;
   border: none;
-  background: #f8fafc;
+  background: #f4f9f6;
   color: #7f8c8d;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 0.85rem;
-  padding: 0.55rem 0.5rem;
+  padding: 0.6rem 0.5rem;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -90,11 +94,13 @@
 
 .amigos-tab:hover {
   background: #edf2f7;
+  color: #27ae60;
 }
 
 .amigos-tab.active {
-  background: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
 }
 
 .amigos-tab-selo {
@@ -110,6 +116,7 @@
   color: #ffffff;
   font-size: 0.7rem;
   font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.15);
 }
 
 /* ============ LISTA ============ */
@@ -126,26 +133,35 @@
 .amigos-busca-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.65rem 0.9rem;
+  padding: 0.7rem 1rem;
   border: 2px solid #edf2f7;
   border-radius: 12px;
   font-family: 'Poppins', sans-serif;
   font-size: 0.9rem;
   color: #2c3e50;
   outline: none;
-  transition: border-color 0.2s ease;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.amigos-busca-input::placeholder {
+  color: #b0bac2;
 }
 
 .amigos-busca-input:focus {
   border-color: #2ecc71;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.12);
 }
 
 .amigos-erro {
   text-align: center;
-  color: #e74c3c;
+  color: #c0392b;
+  background: #fdf2f0;
+  border-radius: 10px;
   font-size: 0.85rem;
-  padding: 0 1rem 0.5rem;
-  margin: 0;
+  padding: 0.6rem 1rem;
+  margin: 0 0.5rem 0.5rem;
 }
 
 /* ============ ITEM DE BUSCA/PEDIDO ============ */
@@ -162,27 +178,33 @@
 .amigo-acao-btn {
   border: none;
   border-radius: 10px;
-  padding: 0.45rem 0.8rem;
+  padding: 0.5rem 0.9rem;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 0.8rem;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .amigo-acao-btn:hover {
-  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .amigo-acao-btn--primaria {
-  background: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
   color: #ffffff;
+  box-shadow: 0 4px 10px rgba(39, 174, 96, 0.25);
 }
 
 .amigo-acao-btn--secundaria {
   background: #f8fafc;
   color: #e74c3c;
+  border: 2px solid #fbe4e0;
+}
+
+.amigo-acao-btn--secundaria:hover {
+  background: #fdf2f0;
 }
 
 .amigo-status {
@@ -190,13 +212,16 @@
   color: #7f8c8d;
   white-space: nowrap;
   flex-shrink: 0;
+  background: #f8fafc;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
 }
 
 .amigos-vazio {
   text-align: center;
   color: #7f8c8d;
   font-size: 0.9rem;
-  padding: 2rem 1rem;
+  padding: 2.5rem 1rem;
   margin: 0;
 }
 
@@ -212,11 +237,12 @@
   cursor: pointer;
   text-align: left;
   font-family: 'Poppins', sans-serif;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .amigo-item:hover {
-  background: #f8fafc;
+  background: #f4f9f6;
+  transform: translateX(2px);
 }
 
 .amigo-avatar {
@@ -232,6 +258,8 @@
   font-weight: 700;
   font-size: 1rem;
   overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.25);
 }
 
 .amigo-avatar img {
@@ -262,6 +290,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 480px) {

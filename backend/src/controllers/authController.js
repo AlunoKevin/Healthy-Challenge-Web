@@ -67,6 +67,7 @@ async function perfil(req, res) {
       nivel_dificuldade: usuario.nivel_dificuldade,
       id_liga: usuario.id_liga,
       liga: usuario.liga,
+      foto_url: usuario.foto_url,
       dias_consecutivos: usuario.dias_consecutivos,
       pontuacao_total: stats.pontos_totais,
       desafios_concluidos: stats.desafios_concluidos
