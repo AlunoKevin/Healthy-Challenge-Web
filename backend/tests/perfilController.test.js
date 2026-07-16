@@ -85,6 +85,88 @@ describe('perfilController.buscarPerfil', () => {
 
 });
 
+describe('perfilController.buscarPerfilPorId', () => {
+
+  let req;
+  let res;
+
+  beforeEach(() => {
+    req = {
+      params: {
+        id: '2'
+      }
+    };
+
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+
+    jest.clearAllMocks();
+  });
+
+  test('retorna perfil de outro usuario com status 200', async () => {
+
+    const perfilMock = {
+      id_usuario: 2,
+      nome: 'Amigo',
+      email: 'amigo@test.com',
+      liga: 'Bronze',
+      grupos: [],
+      amigos: []
+    };
+
+    perfilService.buscarPerfil.mockResolvedValue(perfilMock);
+
+    await perfilController.buscarPerfilPorId(req, res);
+
+    expect(perfilService.buscarPerfil)
+      .toHaveBeenCalledWith('2');
+
+    expect(res.status)
+      .toHaveBeenCalledWith(200);
+
+    expect(res.json)
+      .toHaveBeenCalledWith(perfilMock);
+  });
+
+  test('retorna 404 quando o usuario buscado nao existe', async () => {
+
+    const erro = new Error('usuario nao encontrado');
+    erro.status = 404;
+
+    perfilService.buscarPerfil.mockRejectedValue(erro);
+
+    await perfilController.buscarPerfilPorId(req, res);
+
+    expect(res.status)
+      .toHaveBeenCalledWith(404);
+
+    expect(res.json)
+      .toHaveBeenCalledWith({
+        erro: 'usuario nao encontrado'
+      });
+  });
+
+  test('retorna 500 para erro interno', async () => {
+
+    perfilService.buscarPerfil.mockRejectedValue(
+      new Error('erro inesperado')
+    );
+
+    await perfilController.buscarPerfilPorId(req, res);
+
+    expect(res.status)
+      .toHaveBeenCalledWith(500);
+
+    expect(res.json)
+      .toHaveBeenCalledWith({
+        erro: 'erro interno do servidor'
+      });
+  });
+
+});
+
 describe('perfilController.atualizarPerfil', () => {
 
   let req;
