@@ -10,8 +10,11 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const perfilRoutes = require('./routes/perfilRoutes');
 const historicoRoutes = require('./routes/historicoRoutes');
 const amizadeRoutes = require('./routes/amizadeRoutes');
+const jogoRoutes = require('./routes/jogoRoutes');
 
 const app = express();
+
+app.use('/jogo', jogoRoutes);
 
 app.use(cors());
 // limite maior que o padrao (100kb) para caber a foto de perfil em base64
