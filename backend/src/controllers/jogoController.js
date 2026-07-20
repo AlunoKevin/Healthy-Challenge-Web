@@ -67,7 +67,7 @@ async function abandonarPartida(req, res) {
 
     try {
 
-        jogoService.abandonarPartida(
+        await jogoService.abandonarPartida(
             req.usuario.id_usuario
         );
 
@@ -100,4 +100,5 @@ module.exports = {
     iniciarPartida,
     jogar,
     abandonarPartida
+    
 };
