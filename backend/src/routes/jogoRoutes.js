@@ -21,7 +21,7 @@ router.post(
 );
 
 router.delete(
-    '/',
+    '/abandonar',
     autenticacao,
     jogoController.abandonarPartida
 );

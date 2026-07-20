@@ -38,19 +38,34 @@ function configuracao(dificuldade){
     return CONFIGURACAO[dificuldade];
 }
 
+// refatorado
 function calcularPontos(partida){
+    const BASE = 15;
+    const bonusTempo =Math.floor(partida.tempoRestante / 30);
+    const multiplicadorCombo = calcularMultiplicadorCombo(partida.combo);
 
-    const BONUS_BASE = 15;
+    return Math.round(BASE *partida.quantidadeAtivos *partida.multiplicador *multiplicadorCombo) + bonusTempo;
+}
 
-    const bonusTempo =
-        Math.floor(partida.tempoRestante / 30);
+function calcularMultiplicadorCombo(combo){
 
-    return Math.round(
-        BONUS_BASE *
-        partida.quantidadeAtivos *
-        partida.multiplicador *
-        partida.combo
-    ) + bonusTempo;
+    if(combo <= 1){
+        return 1;
+    }
+
+    if(combo <= 3){
+        return 1.1;
+    }
+
+    if(combo <= 6){
+        return 1.25;
+    }
+
+    if(combo <= 9){
+        return 1.5;
+    }
+
+    return 2;
 }
 
 function aumentarNivel(partida){
@@ -241,10 +256,12 @@ function validarJogada(partida,posicoesSelecionadas,tempoRestante){
 
     atualizarTempo(partida,tempoRestante);
 
-    const pontos = calcularPontos(partida);
+    partida.combo++;
+
+    const pontos =calcularPontos(partida);
+
 
     partida.pontos += pontos;
-    partida.combo++;
     partida.rodada++;
 
     aumentarNivel(partida);
@@ -256,6 +273,8 @@ function validarJogada(partida,posicoesSelecionadas,tempoRestante){
         return{
 
             resultado:'vitoria',
+
+            combo:partida.combo,
 
             pontos_totais:partida.pontos
 
@@ -277,6 +296,7 @@ module.exports = {
     buscarPartida,
     finalizarPartida,
     validarJogada,
+    calcularMultiplicadorCombo,
     calcularPontos,
     aumentarNivel,
     aumentarQuantidadeAtivos,
