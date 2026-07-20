@@ -1,4 +1,4 @@
-# Nome preliminar do aplicativo: Healthy Challenge Web
+# Nome: Healthy Challenge Web
 
 O Healthy Challenge Web é uma aplicação web gamificada voltada para incentivar hábitos saudáveis por meio de competição social. A proposta do sistema é transformar atividades do dia a dia — como beber água, caminhar ou realizar exercícios mentais — em desafios que geram pontuação, promovendo engajamento contínuo dos usuários.
 
