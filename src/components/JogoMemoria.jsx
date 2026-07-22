@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const API_URL = 'http://localhost:3001';
 
 const JogoMemoria = ({ onVoltar }) => {
   const [partida, setPartida] = useState(null);
+  const [etapa, setEtapa] = useState('inicio');
+  const [selecionadas, setSelecionadas] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
+
+  useEffect(() => {
+    if (!partida || etapa !== 'memorizando') {
+      return undefined;
+    }
+
+    const tempo = Number(partida.tempo_memorizacao) * 1000;
+
+    const temporizador = setTimeout(() => {
+      setEtapa('selecionando');
+    }, tempo);
+
+    return () => {
+      clearTimeout(temporizador);
+    };
+  }, [partida, etapa]);
 
   const iniciarPartida = async () => {
     try {
       setCarregando(true);
       setErro('');
+      setSelecionadas([]);
 
       const token = localStorage.getItem('token');
 
@@ -28,15 +47,55 @@ const JogoMemoria = ({ onVoltar }) => {
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        throw new Error(dados.erro || 'Não foi possível iniciar a partida.');
+        throw new Error(
+          dados.erro || 'Não foi possível iniciar a partida.'
+        );
       }
 
       setPartida(dados);
+      setEtapa('memorizando');
     } catch (error) {
       setErro(error.message);
     } finally {
       setCarregando(false);
     }
+  };
+
+  const estaSelecionada = (linha, coluna) => {
+    return selecionadas.some(
+      ([linhaSelecionada, colunaSelecionada]) =>
+        linhaSelecionada === linha &&
+        colunaSelecionada === coluna
+    );
+  };
+
+  const selecionarCelula = (linha, coluna) => {
+    if (etapa !== 'selecionando') {
+      return;
+    }
+
+    const selecionada = estaSelecionada(linha, coluna);
+
+    if (selecionada) {
+      setSelecionadas((anteriores) =>
+        anteriores.filter(
+          ([linhaSelecionada, colunaSelecionada]) =>
+            linhaSelecionada !== linha ||
+            colunaSelecionada !== coluna
+        )
+      );
+
+      return;
+    }
+
+    if (selecionadas.length >= partida.quantidade_ativos) {
+      return;
+    }
+
+    setSelecionadas((anteriores) => [
+      ...anteriores,
+      [linha, coluna]
+    ]);
   };
 
   const voltarParaAtividades = async () => {
@@ -58,11 +117,16 @@ const JogoMemoria = ({ onVoltar }) => {
     onVoltar();
   };
 
+  const selecaoCompleta =
+    partida &&
+    selecionadas.length === partida.quantidade_ativos;
+
   return (
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #effcf7 0%, #b8e6c0 100%)',
+        background:
+          'linear-gradient(135deg, #effcf7 0%, #b8e6c0 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -215,15 +279,44 @@ const JogoMemoria = ({ onVoltar }) => {
               </span>
             </div>
 
-            <p
-              style={{
-                color: '#667085',
-                marginBottom: '1.25rem'
-              }}
-            >
-              Memorize as células verdes. Elas ficarão visíveis por{' '}
-              <strong>{partida.tempo_memorizacao} segundos</strong>.
-            </p>
+            {etapa === 'memorizando' && (
+              <div
+                style={{
+                  background: '#edf8f1',
+                  color: '#247a45',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  marginBottom: '1.25rem',
+                  fontWeight: 700
+                }}
+              >
+                Memorize as células verdes. Elas desaparecerão após{' '}
+                {partida.tempo_memorizacao} segundos.
+              </div>
+            )}
+
+            {etapa === 'selecionando' && (
+              <div
+                style={{
+                  background: '#f3f6ff',
+                  color: '#294b8f',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  marginBottom: '1.25rem'
+                }}
+              >
+                <strong>Agora selecione as células memorizadas.</strong>
+
+                <div
+                  style={{
+                    marginTop: '0.5rem'
+                  }}
+                >
+                  Selecionadas: {selecionadas.length} de{' '}
+                  {partida.quantidade_ativos}
+                </div>
+              </div>
+            )}
 
             <div
               style={{
@@ -236,19 +329,69 @@ const JogoMemoria = ({ onVoltar }) => {
               }}
             >
               {partida.matriz.map((linha, indiceLinha) =>
-                linha.map((valor, indiceColuna) => (
-                  <div
-                    key={`${indiceLinha}-${indiceColuna}`}
-                    style={{
-                      aspectRatio: '1',
-                      borderRadius: '10px',
-                      border: '2px solid #dcebe3',
-                      background: valor === 1 ? '#22a95a' : '#f5f7f6'
-                    }}
-                  />
-                ))
+                linha.map((valor, indiceColuna) => {
+                  const selecionada = estaSelecionada(
+                    indiceLinha,
+                    indiceColuna
+                  );
+
+                  const mostrarComoAtiva =
+                    etapa === 'memorizando' && valor === 1;
+
+                  return (
+                    <button
+                      key={`${indiceLinha}-${indiceColuna}`}
+                      type="button"
+                      aria-label={`Célula ${indiceLinha + 1}, ${
+                        indiceColuna + 1
+                      }`}
+                      disabled={etapa !== 'selecionando'}
+                      onClick={() =>
+                        selecionarCelula(
+                          indiceLinha,
+                          indiceColuna
+                        )
+                      }
+                      style={{
+                        aspectRatio: '1',
+                        borderRadius: '10px',
+                        border: selecionada
+                          ? '3px solid #176b3a'
+                          : '2px solid #dcebe3',
+                        background: mostrarComoAtiva
+                          ? '#22a95a'
+                          : selecionada
+                            ? '#71d398'
+                            : '#f5f7f6',
+                        cursor:
+                          etapa === 'selecionando'
+                            ? 'pointer'
+                            : 'default',
+                        transition:
+                          'background 0.2s ease, border 0.2s ease'
+                      }}
+                    />
+                  );
+                })
               )}
             </div>
+
+            {selecaoCompleta && (
+              <div
+                style={{
+                  background: '#edf8f1',
+                  border: '1px solid #b7ddc5',
+                  color: '#247a45',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  marginTop: '1.25rem',
+                  fontWeight: 700
+                }}
+              >
+                Seleção completa. As posições estão prontas para serem
+                enviadas.
+              </div>
+            )}
           </section>
         )}
 
