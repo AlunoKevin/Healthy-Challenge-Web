@@ -1,11 +1,11 @@
 const partidaService = require('../src/services/partidaService');
 const partidas = require('../src/memory/partidas');
 const perfilModel = require('../src/models/perfilModel');
-const matrizUtils = require('../src/utils/matrizUtils');
+const matriz = require('../src/utils/matriz');
 
 jest.mock('../src/memory/partidas');
 jest.mock('../src/models/perfilModel');
-jest.mock('../src/utils/matrizUtils');
+jest.mock('../src/utils/matriz');
 
 describe('partidaService', () => {
 
@@ -124,7 +124,7 @@ describe('partidaService', () => {
 
         test('gera uma nova matriz', () => {
 
-            matrizUtils.gerarMatriz.mockReturnValue([[1]]);
+            matriz.gerarMatriz.mockReturnValue([[1]]);
 
             const partida = {
                 dimensao: 5,
@@ -133,7 +133,7 @@ describe('partidaService', () => {
 
             partidaService.gerarNovaRodada(partida);
 
-            expect(matrizUtils.gerarMatriz).toHaveBeenCalledWith(
+            expect(matriz.gerarMatriz).toHaveBeenCalledWith(
                 5,
                 2
             );
@@ -154,7 +154,7 @@ describe('partidaService', () => {
                 nivel_dificuldade: 'F'
             });
 
-            matrizUtils.gerarMatriz.mockReturnValue([[0]]);
+            matriz.gerarMatriz.mockReturnValue([[0]]);
 
             partidas.criarPartida.mockImplementation(() => {});
 
@@ -253,7 +253,7 @@ describe('partidaService', () => {
 
         test('retorna derrota por posição incorreta', () => {
 
-            matrizUtils.validarJogada.mockReturnValue(false);
+            matriz.compararJogada.mockReturnValue(false);
 
             const partida = {
                 matriz: [],
@@ -277,9 +277,9 @@ describe('partidaService', () => {
 
         test('retorna acerto', () => {
 
-            matrizUtils.validarJogada.mockReturnValue(true);
+            matriz.compararJogada.mockReturnValue(true);
 
-            matrizUtils.gerarMatriz.mockReturnValue([[1]]);
+            matriz.gerarMatriz.mockReturnValue([[1]]);
 
             const partida = {
 
@@ -330,7 +330,7 @@ describe('partidaService', () => {
 
         test('retorna vitória quando ultrapassa número máximo de rodadas', () => {
 
-            matrizUtils.validarJogada.mockReturnValue(true);
+            matriz.compararJogada.mockReturnValue(true);
 
             const partida = {
 
