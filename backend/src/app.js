@@ -14,9 +14,8 @@ const jogoRoutes = require('./routes/jogoRoutes');
 
 const app = express();
 
-app.use('/jogo', jogoRoutes);
-
 app.use(cors());
+
 // limite maior que o padrao (100kb) para caber a foto de perfil em base64
 app.use(express.json({ limit: '4mb' }));
 
@@ -38,5 +37,6 @@ app.use('/usuario', usuarioRoutes);
 app.use('/perfil', perfilRoutes);
 app.use('/historico', historicoRoutes);
 app.use('/amizades', amizadeRoutes);
+app.use('/jogo', jogoRoutes);
 
 module.exports = app;
