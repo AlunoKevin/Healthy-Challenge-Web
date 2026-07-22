@@ -1,5 +1,5 @@
 const partidas = require('../memory/partidas');
-const matrizUtils = require('../utils/matrizUtils');
+const matrizUtils = require('../utils/matriz');
 const perfilModel = require('../models/perfilModel');
 // possivelmente mudar para a pasta config e criar um arquivo de configuracao do jogo
 const CONFIGURACAO = {
@@ -231,7 +231,7 @@ function validarJogada(partida,posicoesSelecionadas,tempoRestante){
 
     }
 
-    const correto = matrizUtils.validarJogada(
+    const correto = matrizUtils.compararJogada(
         partida.matriz,
         posicoesSelecionadas
     );
