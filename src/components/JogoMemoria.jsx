@@ -6,7 +6,10 @@ const JogoMemoria = ({ onVoltar }) => {
   const [partida, setPartida] = useState(null);
   const [etapa, setEtapa] = useState('inicio');
   const [selecionadas, setSelecionadas] = useState([]);
+  const [resultadoFinal, setResultadoFinal] = useState(null);
+  const [feedback, setFeedback] = useState('');
   const [carregando, setCarregando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
 
   useEffect(() => {
@@ -17,6 +20,7 @@ const JogoMemoria = ({ onVoltar }) => {
     const tempo = Number(partida.tempo_memorizacao) * 1000;
 
     const temporizador = setTimeout(() => {
+      setFeedback('');
       setEtapa('selecionando');
     }, tempo);
 
@@ -29,7 +33,9 @@ const JogoMemoria = ({ onVoltar }) => {
     try {
       setCarregando(true);
       setErro('');
+      setFeedback('');
       setSelecionadas([]);
+      setResultadoFinal(null);
 
       const token = localStorage.getItem('token');
 
@@ -70,7 +76,7 @@ const JogoMemoria = ({ onVoltar }) => {
   };
 
   const selecionarCelula = (linha, coluna) => {
-    if (etapa !== 'selecionando') {
+    if (etapa !== 'selecionando' || enviando) {
       return;
     }
 
@@ -98,6 +104,73 @@ const JogoMemoria = ({ onVoltar }) => {
     ]);
   };
 
+  const selecaoCompleta =
+    partida &&
+    selecionadas.length === partida.quantidade_ativos;
+
+  const enviarJogada = async () => {
+    if (!selecaoCompleta || enviando) {
+      return;
+    }
+
+    try {
+      setEnviando(true);
+      setErro('');
+
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        throw new Error('Usuário não autenticado.');
+      }
+
+      const resposta = await fetch(`${API_URL}/jogo/jogada`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          posicoes: selecionadas,
+          tempo_restante: partida.tempo_restante
+        })
+      });
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.erro || 'Não foi possível enviar a jogada.'
+        );
+      }
+
+      if (dados.resultado === 'acertou') {
+        setFeedback(
+          `Resposta correta! Você ganhou ${dados.pontos_ganhos} pontos.`
+        );
+
+        setPartida(dados);
+        setSelecionadas([]);
+        setEtapa('memorizando');
+        return;
+      }
+
+      if (
+        dados.resultado === 'derrota' ||
+        dados.resultado === 'vitoria'
+      ) {
+        setResultadoFinal(dados);
+        setEtapa('fim');
+        return;
+      }
+
+      throw new Error('Resposta inesperada do servidor.');
+    } catch (error) {
+      setErro(error.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   const voltarParaAtividades = async () => {
     const token = localStorage.getItem('token');
 
@@ -116,10 +189,6 @@ const JogoMemoria = ({ onVoltar }) => {
 
     onVoltar();
   };
-
-  const selecaoCompleta =
-    partida &&
-    selecionadas.length === partida.quantidade_ativos;
 
   return (
     <div
@@ -189,6 +258,22 @@ const JogoMemoria = ({ onVoltar }) => {
           </div>
         )}
 
+        {feedback && etapa !== 'fim' && (
+          <div
+            style={{
+              background: '#edf8f1',
+              border: '1px solid #b7ddc5',
+              color: '#247a45',
+              borderRadius: '12px',
+              padding: '1rem',
+              marginBottom: '1.5rem',
+              fontWeight: 700
+            }}
+          >
+            {feedback}
+          </div>
+        )}
+
         {!partida && (
           <div
             style={{
@@ -227,7 +312,7 @@ const JogoMemoria = ({ onVoltar }) => {
           </div>
         )}
 
-        {partida && (
+        {partida && etapa !== 'fim' && (
           <section
             style={{
               marginBottom: '2rem'
@@ -305,7 +390,9 @@ const JogoMemoria = ({ onVoltar }) => {
                   marginBottom: '1.25rem'
                 }}
               >
-                <strong>Agora selecione as células memorizadas.</strong>
+                <strong>
+                  Agora selecione as células memorizadas.
+                </strong>
 
                 <div
                   style={{
@@ -345,7 +432,9 @@ const JogoMemoria = ({ onVoltar }) => {
                       aria-label={`Célula ${indiceLinha + 1}, ${
                         indiceColuna + 1
                       }`}
-                      disabled={etapa !== 'selecionando'}
+                      disabled={
+                        etapa !== 'selecionando' || enviando
+                      }
                       onClick={() =>
                         selecionarCelula(
                           indiceLinha,
@@ -364,7 +453,7 @@ const JogoMemoria = ({ onVoltar }) => {
                             ? '#71d398'
                             : '#f5f7f6',
                         cursor:
-                          etapa === 'selecionando'
+                          etapa === 'selecionando' && !enviando
                             ? 'pointer'
                             : 'default',
                         transition:
@@ -376,22 +465,97 @@ const JogoMemoria = ({ onVoltar }) => {
               )}
             </div>
 
-            {selecaoCompleta && (
-              <div
+            {etapa === 'selecionando' && (
+              <button
+                type="button"
+                onClick={enviarJogada}
+                disabled={!selecaoCompleta || enviando}
                 style={{
-                  background: '#edf8f1',
-                  border: '1px solid #b7ddc5',
-                  color: '#247a45',
+                  border: 'none',
                   borderRadius: '12px',
-                  padding: '1rem',
-                  marginTop: '1.25rem',
-                  fontWeight: 700
+                  padding: '0.9rem 1.5rem',
+                  marginTop: '1.5rem',
+                  background:
+                    selecaoCompleta && !enviando
+                      ? '#22a95a'
+                      : '#a7cbb5',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  cursor:
+                    selecaoCompleta && !enviando
+                      ? 'pointer'
+                      : 'not-allowed'
                 }}
               >
-                Seleção completa. As posições estão prontas para serem
-                enviadas.
-              </div>
+                {enviando
+                  ? 'Verificando...'
+                  : 'Confirmar seleção'}
+              </button>
             )}
+          </section>
+        )}
+
+        {etapa === 'fim' && resultadoFinal && (
+          <section
+            style={{
+              background:
+                resultadoFinal.resultado === 'vitoria'
+                  ? '#edf8f1'
+                  : '#fff3f3',
+              border:
+                resultadoFinal.resultado === 'vitoria'
+                  ? '1px solid #b7ddc5'
+                  : '1px solid #f0b8b8',
+              borderRadius: '16px',
+              padding: '2rem',
+              marginBottom: '2rem'
+            }}
+          >
+            <div
+              style={{
+                fontSize: '3rem',
+                marginBottom: '1rem'
+              }}
+            >
+              {resultadoFinal.resultado === 'vitoria'
+                ? '🏆'
+                : '😔'}
+            </div>
+
+            <h2
+              style={{
+                color:
+                  resultadoFinal.resultado === 'vitoria'
+                    ? '#247a45'
+                    : '#a12828',
+                marginBottom: '0.75rem'
+              }}
+            >
+              {resultadoFinal.resultado === 'vitoria'
+                ? 'Você venceu!'
+                : 'Fim de jogo'}
+            </h2>
+
+            {resultadoFinal.resultado === 'derrota' && (
+              <p
+                style={{
+                  color: '#667085',
+                  marginBottom: '1rem'
+                }}
+              >
+                {resultadoFinal.motivo === 'tempo_esgotado'
+                  ? 'O tempo da partida terminou.'
+                  : 'As posições selecionadas não estavam corretas.'}
+              </p>
+            )}
+
+            <strong
+              style={{
+                color: '#20344d'
+              }}
+            >
+              Pontos: {resultadoFinal.pontos_totais}
+            </strong>
           </section>
         )}
 
