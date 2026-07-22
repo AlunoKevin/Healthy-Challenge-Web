@@ -190,6 +190,10 @@ describe('jogoService', () => {
 
                 resultado: 'vitoria',
 
+                pontos_jogo: 450,
+
+                pontos_concedidos: 20,
+
                 pontos_totais: 450,
 
                 desafios_concluidos: 5,

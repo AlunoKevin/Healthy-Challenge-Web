@@ -113,6 +113,12 @@ async function concluirPartida(idUsuario,resultado){
 
         resultado:'vitoria',
 
+        pontos_jogo:
+            resultado.pontos_totais,
+
+        pontos_concedidos:
+            pontosConcedidos,
+
         pontos_totais:
             estatisticas.pontos_totais,
 
