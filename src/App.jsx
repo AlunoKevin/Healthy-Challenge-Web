@@ -7,6 +7,7 @@ import Atividades from './components/Atividades';
 import Perfil from './components/Perfil';
 import AdminLogin from './components/AdminLogin';
 import AdminDesafios from './components/AdminDesafios';
+import JogoMemoria from './components/JogoMemoria';
 
 function telaInicial() {
   if (localStorage.getItem('adminToken')) return 'admin';
@@ -73,8 +74,13 @@ function App() {
         <Atividades
           onIrParaDashboard={() => setTelaAtual('dashboard')}
           onIrParaRanking={() => setTelaAtual('ranking')}
+          onIrParaJogo={() => setTelaAtual('jogoMemoria')}
           onVerPerfil={abrirPerfil}
         />
+      )}
+
+      {telaAtual === 'jogoMemoria' && (
+        <JogoMemoria onVoltar={() => setTelaAtual('atividades')} />
       )}
 
       {/* TELA: PERFIL */}
