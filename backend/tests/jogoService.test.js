@@ -171,7 +171,7 @@ describe('jogoService', () => {
                 .toHaveBeenCalledWith(
                     1,
                     7,
-                    450
+                    20
                 );
 
             expect(ligaService.atualizarProgressao)
