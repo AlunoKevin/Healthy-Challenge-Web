@@ -75,8 +75,21 @@ async function concluirPartida(idUsuario,resultado){
 
     }
 
-    // registra a conclusão
-    await jogoModel.registrarConclusao(idUsuario,desafio.id_desafio,resultado.pontos_totais);
+    // converte a pontuação interna do jogo em pontos do sistema
+    const pontosConcedidos = Math.min(
+        20,
+        Math.max(
+            1,
+            Math.round(resultado.pontos_totais / 20)
+        )
+    );
+
+    // registra a conclusão com pontuação limitada
+    await jogoModel.registrarConclusao(
+        idUsuario,
+        desafio.id_desafio,
+        pontosConcedidos
+    );
 
     // estatisticas atualizadas
     const estatisticas =await usuarioModel.buscarEstatisticas(idUsuario);
@@ -99,6 +112,12 @@ async function concluirPartida(idUsuario,resultado){
     return{
 
         resultado:'vitoria',
+
+        pontos_jogo:
+            resultado.pontos_totais,
+
+        pontos_concedidos:
+            pontosConcedidos,
 
         pontos_totais:
             estatisticas.pontos_totais,

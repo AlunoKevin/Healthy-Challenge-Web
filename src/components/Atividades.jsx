@@ -35,7 +35,7 @@ async function buscarIds(endpoint, token) {
   return new Set(dados.map((item) => item.id_desafio || item.id));
 }
 
-const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
+const Atividades = ({ onIrParaDashboard, onIrParaRanking, onIrParaJogo, onVerPerfil }) => {
   const [abaAtiva, setAbaAtiva] = useState('meus');
   const [itens, setItens] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -129,6 +129,26 @@ const Atividades = ({ onIrParaDashboard, onIrParaRanking, onVerPerfil }) => {
 
       <div className="ranking-container">
         <h2>🎯 Central de Atividades</h2>
+
+        <div
+          className="ranking-card"
+          style={{ marginBottom: '1.5rem', padding: '1.25rem 1.5rem', flexWrap: 'wrap', gap: '1rem' }}
+        >
+          <div style={{ flex: '1 1 300px' }}>
+            <span className="ranking-name">🧠 Memória Matricial</span>
+            <p style={{ margin: '0.5rem 0 0', color: '#667085', lineHeight: 1.5 }}>
+              Memorize as células destacadas e repita o padrão antes que o tempo termine.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="atividade-acao-btn atividade-acao-btn--concluir"
+            onClick={onIrParaJogo}
+          >
+            Jogar agora
+          </button>
+        </div>
 
         <div className="atividades-tabs">
           {Object.entries(abas).map(([chave, aba]) => (

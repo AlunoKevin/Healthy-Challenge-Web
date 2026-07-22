@@ -171,7 +171,7 @@ describe('jogoService', () => {
                 .toHaveBeenCalledWith(
                     1,
                     7,
-                    450
+                    20
                 );
 
             expect(ligaService.atualizarProgressao)
@@ -189,6 +189,10 @@ describe('jogoService', () => {
             expect(resultado).toEqual({
 
                 resultado: 'vitoria',
+
+                pontos_jogo: 450,
+
+                pontos_concedidos: 20,
 
                 pontos_totais: 450,
 
