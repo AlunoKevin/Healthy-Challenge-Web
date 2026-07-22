@@ -549,13 +549,86 @@ const JogoMemoria = ({ onVoltar }) => {
               </p>
             )}
 
-            <strong
-              style={{
-                color: '#20344d'
-              }}
-            >
-              Pontos: {resultadoFinal.pontos_totais}
-            </strong>
+            {resultadoFinal.resultado === 'vitoria' ? (
+              <div
+                style={{
+                  display: 'grid',
+                  gap: '0.75rem',
+                  maxWidth: '380px',
+                  margin: '1.25rem auto 0',
+                  textAlign: 'left'
+                }}
+              >
+                <div
+                  style={{
+                    background: '#ffffff',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1rem',
+                    color: '#20344d'
+                  }}
+                >
+                  <strong>Pontuação da partida:</strong>{' '}
+                  {resultadoFinal.pontos_jogo}
+                </div>
+
+                <div
+                  style={{
+                    background: '#ffffff',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1rem',
+                    color: '#247a45'
+                  }}
+                >
+                  <strong>Pontos adicionados ao sistema:</strong>{' '}
+                  {resultadoFinal.pontos_concedidos}
+                </div>
+
+                <div
+                  style={{
+                    background: '#ffffff',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1rem',
+                    color: '#20344d'
+                  }}
+                >
+                  <strong>Total acumulado:</strong>{' '}
+                  {resultadoFinal.pontos_totais}
+                </div>
+
+                <div
+                  style={{
+                    background: '#ffffff',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1rem',
+                    color: '#20344d'
+                  }}
+                >
+                  <strong>Desafios concluídos:</strong>{' '}
+                  {resultadoFinal.desafios_concluidos}
+                </div>
+
+                <div
+                  style={{
+                    background: '#dff5e7',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1rem',
+                    color: '#247a45',
+                    textAlign: 'center',
+                    fontWeight: 700
+                  }}
+                >
+                  ✓ Atividade registrada nos desafios concluídos
+                </div>
+              </div>
+            ) : (
+              <strong
+                style={{
+                  color: '#20344d'
+                }}
+              >
+                Pontos alcançados: {resultadoFinal.pontos_totais}
+              </strong>
+            )}
           </section>
         )}
 
